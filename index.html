@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Arcon — Учи язык с нуля</title>
+<link rel="stylesheet" href="css/style.css?v=4">
+</head>
+<body>
+
+  <!-- ЭКРАН: Главная (список модулей/уроков) -->
+  <div id="screen-home" class="screen">
+    <header class="home-header">
+      <div class="logo-mark">ū</div>
+      <div class="home-titles">
+        <h1>Arcon</h1>
+        <p id="streak-line">Загрузка прогресса…</p>
+      </div>
+    </header>
+    <div id="module-list" class="module-list"><!-- рендерится из JS --></div>
+  </div>
+
+  <!-- ЭКРАН: Теория урока -->
+  <div id="screen-theory" class="screen hidden">
+    <header class="lesson-header">
+      <button class="icon-btn" id="theory-back">←</button>
+      <div class="lesson-progress-bar"><div id="theory-progress-fill" class="progress-fill"></div></div>
+    </header>
+    <div id="theory-content" class="theory-content"><!-- рендерится из JS --></div>
+    <button id="theory-continue" class="btn-primary">Продолжить</button>
+  </div>
+
+  <!-- ЭКРАН: Упражнения -->
+  <div id="screen-exercise" class="screen hidden">
+    <header class="lesson-header">
+      <button class="icon-btn" id="exercise-close">✕</button>
+      <div class="lesson-progress-bar"><div id="exercise-progress-fill" class="progress-fill"></div></div>
+      <div id="exercise-hearts">❤️❤️❤️</div>
+    </header>
+    <div id="exercise-content" class="exercise-content"><!-- рендерится из JS --></div>
+    <div id="exercise-feedback" class="exercise-feedback hidden"></div>
+    <button id="exercise-check" class="btn-primary" disabled>Проверить</button>
+  </div>
+
+  <!-- ЭКРАН: Итог урока -->
+  <div id="screen-complete" class="screen hidden">
+    <div class="complete-box">
+      <div class="complete-emoji">🎉</div>
+      <h2>Урок пройден!</h2>
+      <p id="complete-stats"></p>
+      <button id="complete-continue" class="btn-primary">Отлично</button>
+    </div>
+  </div>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="js/tts.js?v=4"></script>
+<script src="js/storage.js?v=4"></script>
+<script src="js/progress.js?v=4"></script>
+<script src="js/exercises.js?v=4"></script>
+<script src="js/lessons.js?v=4"></script>
+<script src="js/app.js?v=4"></script>
+</body>
+</html>
