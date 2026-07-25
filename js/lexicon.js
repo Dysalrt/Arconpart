@@ -15,14 +15,25 @@ export async function loadLexicon() {
 }
 
 // Проходит по значению любого типа (строка / массив / объект) и возвращает
-// новую версию с заменёнными %Слово% — сам объект не мутирует, отдаёт копию.
+// новую версию с заменёнными %Слово% и ~Слово~ — сам объект не мутирует, отдаёт копию.
+// %Слово% — подставляет перевод как есть.
+// ~Слово~ — тот же перевод, но с заглавной первой буквой (для начала предложения).
 export function resolveLex(value, dict) {
   if (typeof value === "string") {
-    return value.replace(/%([^%]+)%/g, (match, key) => {
+    let result = value.replace(/%([^%]+)%/g, (match, key) => {
       if (key in dict) return dict[key];
       console.warn(`LEX: слово "${key}" не найдено в словаре — оставляю как есть`);
-      return match; // не нашли перевод — оставляем %Слово% видимым, чтобы баг было легко заметить
+      return match;
     });
+    result = result.replace(/~([^~]+)~/g, (match, key) => {
+      if (key in dict) {
+        const word = dict[key];
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      }
+      console.warn(`LEX: слово "${key}" не найдено в словаре — оставляю как есть`);
+      return match;
+    });
+    return result;
   }
   if (Array.isArray(value)) {
     return value.map((v) => resolveLex(v, dict));
