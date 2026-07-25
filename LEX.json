@@ -1,0 +1,391 @@
+/* ============================================
+   ARCON — тема встроена в тему Telegram-клиента,
+   но акцент — авторский: приглушённый индиго
+   (ассоциация с диакритикой ū — "лишней" гласной,
+   которая делает язык узнаваемым)
+   ============================================ */
+
+:root {
+  --tg-bg: var(--tg-theme-bg-color, #ffffff);
+  --tg-text: var(--tg-theme-text-color, #1c1c1e);
+  --tg-hint: var(--tg-theme-hint-color, #8e8e93);
+  --tg-link: var(--tg-theme-link-color, #4f6bed);
+  --tg-button: var(--tg-theme-button-color, #4f6bed);
+  --tg-button-text: var(--tg-theme-button-text-color, #ffffff);
+  --tg-secondary-bg: var(--tg-theme-secondary-bg-color, #f2f2f7);
+
+  --accent: #4f4bed;       /* индиго — акцент курса */
+  --accent-soft: #eceafd;
+  --success: #33a852;
+  --success-soft: #e6f6ea;
+  --error: #e5484d;
+  --error-soft: #fceeee;
+
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+}
+
+* { box-sizing: border-box; }
+
+button {
+  font-family: inherit;
+  color: inherit;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--tg-bg);
+  color: var(--tg-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  min-height: 100vh;
+}
+
+.hidden { display: none !important; }
+
+.screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  padding-bottom: 32px;
+}
+
+/* ---------- Главный экран ---------- */
+
+.home-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.logo-mark {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: var(--accent);
+  color: #fff;
+  font-size: 26px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-style: italic;
+  flex-shrink: 0;
+}
+
+.home-titles h1 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.home-titles p {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--tg-hint);
+}
+
+.module-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.module-block {
+  background: var(--tg-secondary-bg);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+}
+
+.module-title {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--tg-hint);
+  margin: 0 0 10px 4px;
+}
+
+.lesson-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--tg-bg);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: border-color 0.15s ease;
+}
+
+.lesson-row:last-child { margin-bottom: 0; }
+.lesson-row:active { border-color: var(--accent); }
+
+.lesson-row.locked { opacity: 0.45; pointer-events: none; }
+.lesson-row.done { }
+
+.lesson-dot {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.lesson-row.done .lesson-dot {
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.lesson-info { flex: 1; }
+.lesson-info .t { font-size: 15px; font-weight: 500; }
+.lesson-info .s { font-size: 12px; color: var(--tg-hint); margin-top: 1px; }
+
+/* ---------- Заголовок урока ---------- */
+
+.lesson-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: var(--tg-hint);
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.lesson-progress-bar {
+  flex: 1;
+  height: 8px;
+  background: var(--tg-secondary-bg);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  border-radius: 6px;
+  transition: width 0.25s ease;
+}
+
+#exercise-hearts { font-size: 14px; }
+
+/* ---------- Теория ---------- */
+
+.theory-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.theory-content h2 {
+  font-size: 20px;
+  margin: 0;
+}
+
+.theory-content p {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--tg-text);
+  margin: 0;
+}
+
+.example-card {
+  background: var(--tg-secondary-bg);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.speak-btn {
+  border: none;
+  background: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 50%;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.speak-btn:active {
+  background: var(--accent-soft);
+}
+
+.example-card .word {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+}
+.example-card .ipa { color: var(--accent); font-size: 13px; }
+.example-card .translation { color: var(--tg-hint); font-size: 13px; }
+
+.write-input {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--tg-secondary-bg);
+  background: var(--tg-bg);
+  color: var(--tg-text);
+  margin-top: 4px;
+}
+
+.write-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.write-input.correct {
+  border-color: var(--success);
+  background: var(--success-soft);
+}
+
+.write-input.incorrect {
+  border-color: var(--error);
+  background: var(--error-soft);
+}
+
+.write-hint,
+.write-reveal {
+  font-size: 13px;
+  color: var(--tg-hint);
+  margin-top: -6px;
+}
+
+.write-reveal {
+  color: var(--error);
+  font-weight: 500;
+}
+
+/* ---------- Упражнения ---------- */
+
+.exercise-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.exercise-prompt {
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 8px;
+}
+
+.exercise-prompt .ipa-hint {
+  display: block;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--accent);
+  margin-top: 4px;
+}
+
+.choice-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.choice-option {
+  background: var(--tg-secondary-bg);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  padding: 14px;
+  font-size: 15px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.choice-option.selected { border-color: var(--accent); background: var(--accent-soft); }
+.choice-option.correct { border-color: var(--success); background: var(--success-soft); }
+.choice-option.incorrect { border-color: var(--error); background: var(--error-soft); }
+
+.match-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.match-item {
+  background: var(--tg-secondary-bg);
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  font-size: 14px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.match-item.selected { border-color: var(--accent); }
+.match-item.matched { background: var(--success-soft); color: var(--success); opacity: 0.7; }
+
+.exercise-feedback {
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  font-size: 14px;
+}
+
+.exercise-feedback.ok { background: var(--success-soft); color: var(--success); }
+.exercise-feedback.fail { background: var(--error-soft); color: var(--error); }
+
+/* ---------- Кнопки ---------- */
+
+.btn-primary {
+  background: var(--tg-button, var(--accent));
+  color: var(--tg-button-text, #fff);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 15px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 16px;
+  width: 100%;
+}
+
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ---------- Экран завершения ---------- */
+
+#screen-complete {
+  justify-content: center;
+  align-items: center;
+}
+
+.complete-box {
+  text-align: center;
+  max-width: 320px;
+}
+
+.complete-emoji { font-size: 56px; margin-bottom: 8px; }
+.complete-box h2 { margin: 0 0 8px; }
+.complete-box p { color: var(--tg-hint); margin: 0 0 8px; }
