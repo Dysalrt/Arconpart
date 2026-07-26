@@ -12,7 +12,7 @@
       "title": "Работа с классами",
       "lessons": [
         {"id": "1-1", "title": "Классы слов", "subtitle": "классы", "file": "1-1.json"}
-        { "id": "1-2". "title": "Первые глаголы", "subtitle" "", "file": "1-2.json"}
+        { "id": "1-2", "title": "Первые глаголы", "subtitle" "", "file": "1-2.json"}
       ]
     }
   ]
