@@ -1,0 +1,81 @@
+{
+  "id": "1-3",
+  "title": "Разговорные слова",
+  "xp": 10,
+  "lesson": [
+    {
+      "type": "T",
+      "title": "Введения",
+      "theory": "Как бы хорошо вы бы не знали язык, без базовых слов для диалогов, ваша речь будет звучать без человечности, поэтому посмотрим на базовые слова для данного урока",
+      "examples": [
+        {
+          "word": "%hello%",
+          "ipa": "",
+          "translation": "Здравствуйте"
+        },
+        {
+          "word": "%hi%",
+          "ipa": "",
+          "translation": "Привет"
+        },
+        {
+          "word": "%bye%",
+          "ipa": "",
+          "translation": "Пока"
+        },
+        {
+          "word": "%goodbye%",
+          "ipa": "",
+          "translation": "До свидания/До встречи"
+        },
+        {
+          "word": "%qo%",
+          "ipa": "",
+          "translation": "как"
+        },
+        {
+          "word": "%thanks%",
+          "ipa": "",
+          "translation": "спасибо"
+        }
+      ]
+    },
+    {
+      "type": "T",
+      "title": "Мелкие фразы",
+      "theory": "Посмотрите на эти базовые фразы",
+      "examples": [
+        {
+          "word": "Venite, qu ede vū?",
+          "ipa": "",
+          "translation": "Привет, как дела? или Привет, как ты?"
+        },
+        {
+          "word": "Venite, vi ede ven, vinae.",
+          "ipa": "",
+          "translation": "Привет, я в порядке, спасибо"
+        }
+      ]
+    },
+    {
+      "type": "E",
+      "Etype": "write",
+      "prompt": "Переведите фразу\nКак дела?",
+      "speak": null,
+      "ipaHint": null,
+      "answers": [
+        "Qo ede vū"
+      ]
+    },
+    {
+      "type": "E",
+      "Etype": "write",
+      "prompt": "Переведи фразу\nQite, vi ede ven.",
+      "speak": "Qite, vi ede ven.",
+      "ipaHint": null,
+      "answers": [
+        "Здравствуйте, я в порядке"
+      ]
+    }
+  ]
+}
