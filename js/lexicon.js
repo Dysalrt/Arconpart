@@ -14,13 +14,40 @@ export async function loadLexicon() {
   return lex;
 }
 
+const VOWELS = new Set(["a", "e", "i", "o", "u", "ū"]);
+
 // Проходит по значению любого типа (строка / массив / объект) и возвращает
-// новую версию с заменёнными %Слово% и ~Слово~ — сам объект не мутирует, отдаёт копию.
+// новую версию с заменёнными %Слово%, ~Слово~ и условными суффиксами.
 // %Слово% — подставляет перевод как есть.
 // ~Слово~ — тот же перевод, но с заглавной первой буквой (для начала предложения).
+// %Слово%{если_гласная, если_согласная} — подставляет перевод + один из двух
+// суффиксов, в зависимости от того, на какую букву заканчивается САМ ПЕРЕВОД
+// (а не английское слово) — это значит, суффикс не переносится вручную,
+// а посчитается заново, если слово в LEX.json когда-нибудь изменится.
 export function resolveLex(value, dict) {
   if (typeof value === "string") {
-    let result = value.replace(/%([^%]+)%/g, (match, key) => {
+    let result = value;
+
+    // Сначала — комбинированный шаблон с условным суффиксом, ДО обычной
+    // замены %Слово%/~Слово~, иначе "{если_гласная, если_согласная}"
+    // останется висеть в тексте без своего слова.
+    result = result.replace(
+      /([%~])([^%~]+)\1\{([^,}]*),([^}]*)\}/g,
+      (match, marker, key, ifVowel, ifConsonant) => {
+        if (!(key in dict)) {
+          console.warn(`LEX: слово "${key}" не найдено в словаре — оставляю как есть`);
+          return match;
+        }
+        let word = dict[key];
+        if (marker === "~") word = word.charAt(0).toUpperCase() + word.slice(1);
+        const lastChar = word.slice(-1).toLowerCase();
+        const suffix = VOWELS.has(lastChar) ? ifVowel.trim() : ifConsonant.trim();
+        return word + suffix;
+      }
+    );
+
+    // Обычные %Слово% и ~Слово~ — то, что осталось без условного суффикса
+    result = result.replace(/%([^%]+)%/g, (match, key) => {
       if (key in dict) return dict[key];
       console.warn(`LEX: слово "${key}" не найдено в словаре — оставляю как есть`);
       return match;
@@ -33,6 +60,7 @@ export function resolveLex(value, dict) {
       console.warn(`LEX: слово "${key}" не найдено в словаре — оставляю как есть`);
       return match;
     });
+
     return result;
   }
   if (Array.isArray(value)) {
