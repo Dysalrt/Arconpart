@@ -38,7 +38,7 @@
   <textarea id="t-input" class="t-textarea" placeholder="Например: привет, как дела?"></textarea>
   <button id="t-translate-btn" class="btn-primary" style="margin-top:10px;">Перевести</button>
 
-  <div class="t-result-block">
+  <div class="t-result-block", style="display: none;">
     <div class="t-result-label">Английский (промежуточный шаг)</div>
     <div id="t-english-box" class="t-result-box">—</div>
   </div>
@@ -48,12 +48,6 @@
     <div id="t-arcon-box" class="t-result-box arcon">—</div>
     <div id="t-missing-box" class="t-missing"></div>
   </div>
-
-  <p class="t-note">
-    Это не ИИ-перевод — простая подстановка слов по <code>LEX.json</code>. Слова, которых нет в словаре,
-    остаются на английском (выделены ниже) — так сразу видно, что стоит добавить в словарь.
-    Google Translate используется неофициально, без ключа — иногда может быть недоступен.
-  </p>
 </div>
 
 <script type="module">
