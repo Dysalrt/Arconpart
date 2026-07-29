@@ -2,8 +2,8 @@
   "words": {
     "I": "Vi",
     "You": "Vū",
-    "He": "Il",
-    "She": "El",
+    "He": "Ul",
+    "She": "Ul",
     "It": "Di",
     "What": "Qu",
     "Who": "Qa",
@@ -17,7 +17,7 @@
     "with": "ih"
   },
   "verbs": {
-    "Be": "e",
+    "Be": "es",
     "Do": "ane",
     "Want": "hūl",
     "Run": "caro"
