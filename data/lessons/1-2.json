@@ -1,0 +1,64 @@
+{
+  "id": "1-2",
+  "title": "Plural & Possession",
+  "xp": 10,
+  "lesson": [
+    {
+      "type": "T",
+      "title": "Two word classes",
+      "theory": "Class I ends in a vowel; Class II ends in a consonant. The class is determined by the current surface form.",
+      "examples": [
+        {
+          "word": "mate",
+          "ipa": "—",
+          "translation": "mother • Class I"
+        },
+        {
+          "word": "vour",
+          "ipa": "—",
+          "translation": "house • Class II"
+        }
+      ]
+    },
+    {
+      "type": "E",
+      "Etype": "choice",
+      "prompt": "Which class does <b>vour</b> belong to?",
+      "ipaHint": null,
+      "options": [
+        "Class I",
+        "Class II",
+        "Both",
+        "Neither"
+      ],
+      "answer": "Class II"
+    },
+    {
+      "type": "T",
+      "title": "Plural first",
+      "theory": "Plural is formed before possession. Class I takes <b>+n</b>; Class II takes <b>+en</b>. Possessive marking is added after the plural.",
+      "examples": [
+        {
+          "word": "vour → vouren",
+          "ipa": "—",
+          "translation": "house → houses"
+        },
+        {
+          "word": "mate → maten",
+          "ipa": "—",
+          "translation": "mother → mothers"
+        }
+      ]
+    },
+    {
+      "type": "E",
+      "Etype": "write",
+      "prompt": "What is the plural of “vour” (house)?",
+      "speak": "vouren",
+      "ipaHint": null,
+      "answers": [
+        "vouren"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "modules": [
+    {
+      "id": "0",
+      "title": "Getting Started",
+      "lessons": [
+        {
+          "id": "0-1",
+          "title": "Greetings & Names",
+          "subtitle": "Say hello, goodbye, and use basic expressions.",
+          "file": "0-1.json"
+        },
+        {
+          "id": "0-2",
+          "title": "The Core Sentence",
+          "subtitle": "Build simple Arcon SVO sentences.",
+          "file": "0-2.json"
+        }
+      ]
+    },
+    {
+      "id": "1",
+      "title": "People & Things",
+      "lessons": [
+        {
+          "id": "1-1",
+          "title": "Pronouns",
+          "subtitle": "Learn the core personal pronouns.",
+          "file": "1-1.json"
+        },
+        {
+          "id": "1-2",
+          "title": "Plural & Possession",
+          "subtitle": "Use Arcon's two word classes.",
+          "file": "1-2.json"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "title": "Actions",
+      "lessons": [
+        {
+          "id": "2-1",
+          "title": "Verb Tenses",
+          "subtitle": "Talk about past, present, and future.",
+          "file": "2-1.json"
+        },
+        {
+          "id": "2-2",
+          "title": "Questions & Negation",
+          "subtitle": "Ask questions and make negative statements.",
+          "file": "2-2.json"
+        }
+      ]
+    }
+  ]
+}

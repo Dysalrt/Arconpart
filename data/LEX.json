@@ -1,0 +1,122 @@
+{
+  "hello": {
+    "root": "Qite",
+    "pos": "interjection"
+  },
+  "hi": {
+    "root": "venite",
+    "pos": "interjection"
+  },
+  "goodbye": {
+    "root": "qami",
+    "pos": "interjection"
+  },
+  "thankyou": {
+    "root": "vinae",
+    "pos": "expression"
+  },
+  "i": {
+    "root": "vi",
+    "pos": "pronoun"
+  },
+  "you": {
+    "root": "vū",
+    "pos": "pronoun"
+  },
+  "we": {
+    "root": "siv",
+    "pos": "pronoun"
+  },
+  "they": {
+    "root": "vos",
+    "pos": "pronoun"
+  },
+  "house": {
+    "root": "vour",
+    "pos": "noun"
+  },
+  "water": {
+    "root": "ov",
+    "pos": "noun"
+  },
+  "person": {
+    "root": "ums",
+    "pos": "noun"
+  },
+  "woman": {
+    "root": "ulums",
+    "pos": "noun"
+  },
+  "man": {
+    "root": "alums",
+    "pos": "noun"
+  },
+  "go": {
+    "root": "ro",
+    "pos": "verb"
+  },
+  "be": {
+    "root": "es",
+    "pos": "verb"
+  },
+  "speak": {
+    "root": "cep",
+    "pos": "verb"
+  },
+  "eat": {
+    "root": "ate",
+    "pos": "verb"
+  },
+  "good": {
+    "root": "ven",
+    "pos": "adjective"
+  },
+  "bad": {
+    "root": "am",
+    "pos": "adjective"
+  },
+  "not": {
+    "root": "nai",
+    "pos": "particle"
+  },
+  "where": {
+    "root": "qer",
+    "pos": "question"
+  },
+  "when": {
+    "root": "qanq",
+    "pos": "question"
+  },
+  "who": {
+    "root": "qa",
+    "pos": "question"
+  },
+  "why": {
+    "root": "qi",
+    "pos": "question"
+  },
+  "how": {
+    "root": "qo",
+    "pos": "question"
+  },
+  "than": {
+    "root": "cev",
+    "pos": "particle"
+  },
+  "in": {
+    "root": "en",
+    "pos": "preposition"
+  },
+  "okay": {
+    "root": "ven",
+    "pos": "expression"
+  },
+  "wait": {
+    "root": "doh",
+    "pos": "verb"
+  },
+  "of": {
+    "root": "ir",
+    "pos": "preposition"
+  }
+}

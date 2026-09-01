@@ -1,0 +1,70 @@
+{
+  "id": "0-1",
+  "title": "Greetings & Names",
+  "xp": 10,
+  "lesson": [
+    {
+      "type": "T",
+      "title": "Say hello",
+      "theory": "Arcon has several greetings. <b>venite</b> is informal, while <b>qite</b> is formal.",
+      "examples": [
+        {
+          "word": "venite",
+          "ipa": "—",
+          "translation": "hi"
+        },
+        {
+          "word": "qite",
+          "ipa": "—",
+          "translation": "formal greeting / hello"
+        },
+        {
+          "word": "vinae",
+          "ipa": "—",
+          "translation": "thank you"
+        }
+      ]
+    },
+    {
+      "type": "E",
+      "Etype": "choice",
+      "prompt": "Which Arcon word means “hello” in a formal setting?",
+      "ipaHint": null,
+      "options": [
+        "qite",
+        "qami",
+        "doh",
+        "los"
+      ],
+      "answer": "qite"
+    },
+    {
+      "type": "E",
+      "Etype": "match",
+      "pairs": [
+        [
+          "venite",
+          "hi"
+        ],
+        [
+          "qami",
+          "bye"
+        ],
+        [
+          "vinae",
+          "thank you"
+        ]
+      ]
+    },
+    {
+      "type": "E",
+      "Etype": "write",
+      "prompt": "Write the Arcon word for “thank you”.",
+      "speak": "vinae",
+      "ipaHint": null,
+      "answers": [
+        "vinae"
+      ]
+    }
+  ]
+}
