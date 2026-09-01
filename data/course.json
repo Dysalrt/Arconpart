@@ -9,12 +9,6 @@
           "title": "Greetings & Names",
           "subtitle": "Say hello, goodbye, and use basic expressions.",
           "file": "0-1.json"
-        },
-        {
-          "id": "0-2",
-          "title": "The Core Sentence",
-          "subtitle": "Build simple Arcon SVO sentences.",
-          "file": "0-2.json"
         }
       ]
     }
