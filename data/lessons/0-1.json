@@ -11,14 +11,14 @@
     {
       "type": "T",
       "title": "Vowels",
-      "theory": "Five familiar vowels, plus the special ū — which isn't a separate sound, but the combination \"yu\" — [ju].",
+      "theory": "Five familiar vowels, plus the special ū — it sounds like German ü (as in 'über') or French u (as in 'tu'): round your lips as if saying 'oo', but position your tongue as if saying 'ee'.",
       "examples": [
         { "word": "a", "ipa": "[a]", "translation": "like the 'a' in 'father'" },
         { "word": "e", "ipa": "[ɛ] (sometimes [e])", "translation": "either pronunciation is correct" },
         { "word": "i", "ipa": "[i]", "translation": "like the 'ee' in 'see'" },
         { "word": "o", "ipa": "[o]", "translation": "like the 'o' in 'go'" },
         { "word": "u", "ipa": "[u]", "translation": "like the 'oo' in 'moon'" },
-        { "word": "ū", "ipa": "[ju]", "translation": "like the 'yu' in 'yule'" }
+        { "word": "ū", "ipa": "[y]", "translation": "like German ü (über) or French u (tu)" }
       ]
     },
     {
@@ -26,8 +26,8 @@
       "Etype": "choice",
       "prompt": "How is the special letter ū pronounced?",
       "ipaHint": null,
-      "options": ["[u]", "[ju]", "[o]", "[y]"],
-      "answer": "[ju]"
+      "options": ["[u]", "[y]", "[o]", "[ju]"],
+      "answer": "[y]"
     },
     {
       "type": "T",
