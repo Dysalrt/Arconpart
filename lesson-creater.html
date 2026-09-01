@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arcon Lesson Builder</title>
+<style>
+:root{--bg:#f4f5f8;--panel:#fff;--text:#20242c;--muted:#687080;--border:#d9dde5;--accent:#5b50c9;--accent-soft:#efedff;--danger:#b83b4a;--ok:#287a55;--radius:12px}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{background:var(--panel);border-bottom:1px solid var(--border);padding:16px 20px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:20px}header p{margin:3px 0 0;color:var(--muted);font-size:13px}
+main{width:min(900px,calc(100% - 24px));margin:22px auto 50px}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:1fr 2fr 110px;gap:12px}
+label{display:block;font-weight:700;margin-bottom:5px}small,.hint{color:var(--muted);font-size:12px}
+input,textarea,select{width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 10px;background:#fff;color:var(--text);font:inherit}
+textarea{min-height:92px;resize:vertical}
+button{border:1px solid var(--border);border-radius:8px;padding:8px 11px;background:#fff;color:var(--text);cursor:pointer}
+button:hover{border-color:var(--accent)}button:disabled{opacity:.45;cursor:not-allowed}
+.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:750}.danger{color:var(--danger)}.toolbar{display:flex;gap:8px;flex-wrap:wrap}
+.list{display:grid;gap:10px}.item{border:1px solid var(--border);border-radius:10px;background:#fafbfc;overflow:hidden}
+.item-head{display:flex;align-items:center;gap:8px;padding:9px 10px;background:#f0f1f5;border-bottom:1px solid var(--border)}
+.tag{font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;padding:4px 7px;border-radius:6px;background:var(--accent-soft);color:var(--accent)}
+.item-title{font-weight:750;flex:1}.move{padding:4px 8px}.item-body{padding:13px}
+.fields{display:grid;gap:12px}.example,.option,.pair,.answer{display:grid;gap:8px;grid-template-columns:1fr 1fr 1fr auto;align-items:end;border:1px solid var(--border);border-radius:8px;padding:9px;margin-top:8px;background:#fff}
+.option{grid-template-columns:1fr auto}.pair{grid-template-columns:1fr 1fr auto}.answer{grid-template-columns:1fr auto}
+.subhead{display:flex;align-items:center;justify-content:space-between;margin-top:13px}.subhead strong{font-size:13px}
+.actions{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+#message{display:none;margin-bottom:12px;padding:10px 12px;border-radius:8px;background:#fff0f2;color:var(--danger);border:1px solid #efc2c8}
+#output{display:none}.raw{min-height:320px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px}
+@media(max-width:650px){.grid{grid-template-columns:1fr}.example{grid-template-columns:1fr}.option,.pair,.answer{grid-template-columns:1fr}.item-head{flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<header><h1>Arcon Lesson Builder</h1><p>Build lesson JSON for the Arcon Learning App without hand-writing JSON.</p></header>
+<main>
+<div id="message"></div>
+
+<section class="panel">
+  <h2>Lesson details</h2>
+  <div class="grid">
+    <div><label for="lessonId">Lesson ID</label><input id="lessonId" placeholder="3-1"></div>
+    <div><label for="lessonTitle">Title</label><input id="lessonTitle" placeholder="Lesson title"></div>
+    <div><label for="xp">XP</label><input id="xp" type="number" value="10"></div>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="actions">
+    <div><h2 style="margin:0">Lesson items</h2><div class="hint">Theory and exercises share one ordered list. Reorder them with ▲ and ▼.</div></div>
+    <div class="toolbar"><button id="addTheory">+ Add Theory</button><button id="addExercise">+ Add Exercise</button></div>
+  </div>
+  <div id="items" class="list" style="margin-top:14px"></div>
+  <div class="toolbar" style="margin-top:12px"><button id="addTheory2">+ Add Theory</button><button id="addExercise2">+ Add Exercise</button></div>
+</section>
+
+<section class="panel">
+  <div class="actions">
+    <button id="clear" class="danger">Clear</button>
+    <button id="create" class="primary">Create</button>
+  </div>
+</section>
+
+<section id="output" class="panel">
+  <div class="actions"><h2 style="margin:0">Generated JSON</h2><button id="copy">Copy</button></div>
+  <textarea id="raw" class="raw" readonly></textarea>
+</section>
+</main>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+const items=$("#items"), message=$("#message");
+
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function input(label,cls="",value="",ph=""){return `<div><label>${esc(label)}</label><input class="${cls}" value="${esc(value)}" placeholder="${esc(ph)}"></div>`}
+function textarea(label,cls="",value="",ph=""){return `<div><label>${esc(label)}</label><textarea class="${cls}" placeholder="${esc(ph)}">${esc(value)}</textarea></div>`}
+
+function addTheory(){
+ const el=document.createElement("div");el.className="item";el.dataset.type="T";
+ el.innerHTML=`<div class="item-head"><span class="tag">Theory</span><span class="item-title">Theory card</span>
+ <button class="move up" title="Move up">▲</button><button class="move down" title="Move down">▼</button><button class="danger remove">Remove</button></div>
+ <div class="item-body"><div class="fields">
+ ${input("Title","t-title","","Theory title")}
+ ${textarea("Body text","t-theory","","Explain the concept here…")}
+ <div><div class="subhead"><strong>Examples</strong><button class="add-example">+ Add example</button></div><div class="examples"></div></div>
+ </div></div>`;
+ items.appendChild(el);addExample(el);wireItem(el);
+}
+function addExample(parent){
+ const box=document.createElement("div");box.className="example";
+ box.innerHTML=`${input("Arcon word","ex-word","","Arcon word")}${input("IPA / note","ex-ipa","","IPA or pronunciation note")}${input("Translation","ex-trans","","English translation")}<button class="danger remove-row">Remove</button>`;
+ parent.querySelector(".examples").appendChild(box);
+}
+function addExercise(){
+ const el=document.createElement("div");el.className="item";el.dataset.type="E";el.dataset.etype="choice";
+ el.innerHTML=`<div class="item-head"><span class="tag">Exercise</span><span class="item-title">Exercise</span>
+ <button class="move up">▲</button><button class="move down">▼</button><button class="danger remove">Remove</button></div>
+ <div class="item-body"><div class="fields">
+ <div><label>Exercise type</label><select class="etype"><option value="choice">choice</option><option value="match">match</option><option value="write">write</option></select></div>
+ <div class="exercise-fields"></div></div></div>`;
+ items.appendChild(el);wireItem(el);renderExercise(el,"choice");
+}
+function choiceFields(el){
+ return `${textarea("Prompt","e-prompt","","Question or instruction…")}
+ ${input("Optional IPA hint","e-ipa","","Leave blank if not needed")}
+ <div><div class="subhead"><strong>Options</strong><button class="add-option">+ Add option</button></div><div class="options"></div><div class="hint">Answer should exactly match one of the options. The builder does not enforce this.</div></div>
+ ${input("Answer","e-answer","","Exact correct option")}`;
+}
+function matchFields(el){
+ return `<div><div class="subhead"><strong>Pairs</strong><button class="add-pair">+ Add pair</button></div><div class="pairs"></div></div>`;
+}
+function writeFields(el){
+ return `${textarea("Prompt","e-prompt","","Instruction…")}
+ ${input("Optional speak","e-speak","","Exact Arcon text for 🔊 pronunciation")}
+ ${input("Optional IPA hint","e-ipa","","Leave blank if not needed")}
+ <div><div class="subhead"><strong>Accepted answers</strong><button class="add-answer">+ Add answer</button></div><div class="answers"></div></div>`;
+}
+function renderExercise(el,type){
+ el.dataset.etype=type;el.querySelector(".exercise-fields").innerHTML=type==="choice"?choiceFields(el):type==="match"?matchFields(el):writeFields(el);
+ if(type==="choice"){addOption(el);addOption(el)}
+ if(type==="match"){addPair(el);addPair(el)}
+ if(type==="write"){addAnswer(el)}
+ wireRows(el);
+}
+function addOption(p){const b=document.createElement("div");b.className="option";b.innerHTML=`${input("Option","row-value","","Option text")}<button class="danger remove-row">Remove</button>`;p.querySelector(".options").appendChild(b)}
+function addPair(p){const b=document.createElement("div");b.className="pair";b.innerHTML=`${input("Arcon word","pair-word","","Arcon word")}${input("Translation","pair-trans","","English translation")}<button class="danger remove-row">Remove</button>`;p.querySelector(".pairs").appendChild(b)}
+function addAnswer(p){const b=document.createElement("div");b.className="answer";b.innerHTML=`${input("Accepted answer","row-value","","Accepted answer")}<button class="danger remove-row">Remove</button>`;p.querySelector(".answers").appendChild(b)}
+function wireRows(el){
+ el.querySelectorAll(".add-option").forEach(b=>b.onclick=()=>addOption(el));
+ el.querySelectorAll(".add-pair").forEach(b=>b.onclick=()=>addPair(el));
+ el.querySelectorAll(".add-answer").forEach(b=>b.onclick=()=>addAnswer(el));
+ el.querySelectorAll(".remove-row").forEach(b=>b.onclick=()=>b.parentElement.remove());
+}
+function wireItem(el){
+ el.querySelector(".remove").onclick=()=>el.remove();
+ el.querySelector(".up").onclick=()=>{const p=el.previousElementSibling;if(p)items.insertBefore(el,p)};
+ el.querySelector(".down").onclick=()=>{const n=el.nextElementSibling;if(n)items.insertBefore(n,el)};
+ el.querySelector(".add-example")?.addEventListener("click",()=>addExample(el));
+ el.querySelector(".etype")?.addEventListener("change",e=>renderExercise(el,e.target.value));
+ wireRows(el);
+}
+
+function addT(){addTheory()}function addE(){addExercise()}
+["addTheory","addTheory2"].forEach(id=>$("#"+id).onclick=addT);
+["addExercise","addExercise2"].forEach(id=>$("#"+id).onclick=addE);
+
+function val(el,cls){return el.querySelector("."+cls)?.value??""}
+function build(){
+ const id=$("#lessonId").value.trim();if(!id){message.textContent="Please enter a Lesson ID before creating the JSON.";message.style.display="block";$("#lessonId").focus();return null}
+ message.style.display="none";
+ const out={id,title:$("#lessonTitle").value.trim(),xp:Number($("#xp").value)||0,lesson:[]};
+ items.querySelectorAll(":scope > .item").forEach(el=>{
+  if(el.dataset.type==="T"){
+   const x={type:"T",title:val(el,"t-title"),theory:val(el,"t-theory"),examples:[]};
+   el.querySelectorAll(".example").forEach(r=>x.examples.push({word:val(r,"ex-word"),ipa:val(r,"ex-ipa"),translation:val(r,"ex-trans")}));
+   out.lesson.push(x);
+  }else{
+   const type=el.dataset.etype;
+   if(type==="choice"){
+    const x={type:"E",Etype:"choice",prompt:val(el,"e-prompt"),ipaHint:null,options:[],answer:val(el,"e-answer")};
+    const ipa=val(el,"e-ipa");if(ipa)x.ipaHint=ipa;
+    el.querySelectorAll(".option .row-value").forEach(i=>x.options.push(i.value));
+    if(!ipa)delete x.ipaHint;
+    out.lesson.push(x);
+   }else if(type==="match"){
+    const x={type:"E",Etype:"match",pairs:[]};
+    el.querySelectorAll(".pair").forEach(r=>x.pairs.push([val(r,"pair-word"),val(r,"pair-trans")]));
+    out.lesson.push(x);
+   }else{
+    const x={type:"E",Etype:"write",prompt:val(el,"e-prompt"),answers:[]};
+    const speak=val(el,"e-speak"),ipa=val(el,"e-ipa");if(speak)x.speak=speak;if(ipa)x.ipaHint=ipa;
+    el.querySelectorAll(".answer .row-value").forEach(i=>x.answers.push(i.value));
+    out.lesson.push(x);
+   }
+  }
+ });
+ return out;
+}
+$("#create").onclick=()=>{
+ const data=build();if(!data)return;
+ const json=JSON.stringify(data,null,2),blob=new Blob([json],{type:"application/json"});
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=data.id+".json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+ $("#raw").value=json;$("#output").style.display="block";$("#output").scrollIntoView({behavior:"smooth"});
+};
+$("#copy").onclick=async()=>{try{await navigator.clipboard.writeText($("#raw").value);$("#copy").textContent="Copied!";setTimeout(()=>$("#copy").textContent="Copy",1200)}catch{$("#raw").select();document.execCommand("copy");$("#copy").textContent="Copied!"}};
+$("#clear").onclick=()=>{if(!confirm("Clear the entire lesson form? This cannot be undone."))return;$("#lessonId").value="";$("#lessonTitle").value="";$("#xp").value="10";items.innerHTML="";$("#output").style.display="none";$("#raw").value="";message.style.display="none"};
+</script>
+</body>
+</html>
