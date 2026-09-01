@@ -1,69 +1,63 @@
 {
   "id": "0-1",
-  "title": "Greetings & Names",
-  "xp": 10,
+  "title": "Letters and Sounds",
   "lesson": [
     {
       "type": "T",
-      "title": "Say hello",
-      "theory": "Arcon has several greetings. <b>venite</b> is informal, while <b>qite</b> is formal.",
+      "title": "27 familiar letters",
+      "theory": "Arcon uses the standard Latin alphabet from a to z, plus one extra letter — ū (u with a line on top). Most letters sound almost the same as they do in English or in IPA transcription.",
+      "examples": []
+    },
+    {
+      "type": "T",
+      "title": "Vowels",
+      "theory": "Five familiar vowels, plus the special ū — which isn't a separate sound, but the combination \"yu\" — [ju].",
       "examples": [
-        {
-          "word": "venite",
-          "ipa": "—",
-          "translation": "hi"
-        },
-        {
-          "word": "qite",
-          "ipa": "—",
-          "translation": "formal greeting / hello"
-        },
-        {
-          "word": "vinae",
-          "ipa": "—",
-          "translation": "thank you"
-        }
+        { "word": "a", "ipa": "[a]", "translation": "like the 'a' in 'father'" },
+        { "word": "e", "ipa": "[ɛ] (sometimes [e])", "translation": "either pronunciation is correct" },
+        { "word": "i", "ipa": "[i]", "translation": "like the 'ee' in 'see'" },
+        { "word": "o", "ipa": "[o]", "translation": "like the 'o' in 'go'" },
+        { "word": "u", "ipa": "[u]", "translation": "like the 'oo' in 'moon'" },
+        { "word": "ū", "ipa": "[ju]", "translation": "like the 'yu' in 'yule'" }
       ]
     },
     {
       "type": "E",
       "Etype": "choice",
-      "prompt": "Which Arcon word means “hello” in a formal setting?",
+      "prompt": "How is the special letter ū pronounced?",
       "ipaHint": null,
-      "options": [
-        "qite",
-        "qami",
-        "doh",
-        "los"
-      ],
-      "answer": "qite"
+      "options": ["[u]", "[ju]", "[o]", "[y]"],
+      "answer": "[ju]"
+    },
+    {
+      "type": "T",
+      "title": "Consonants",
+      "theory": "Consonants are very predictable (b, d, f, g, l, m, n, p, r, s, t, v, z — as usual), but there are a few worth knowing about:",
+      "examples": [
+        { "word": "c", "ipa": "[k]", "translation": "always like 'k', never like 's'" },
+        { "word": "h", "ipa": "[x]", "translation": "like the 'ch' in Scottish 'loch' or German 'Bach' — not a sound English uses natively" },
+        { "word": "j", "ipa": "[ʒ]", "translation": "like the 's' in 'measure' or 'vision'" },
+        { "word": "q", "ipa": "[kj]", "translation": "a soft 'ky' sound" },
+        { "word": "w", "ipa": "[v]", "translation": "sounds like v, but rare — mostly appears in loanwords" },
+        { "word": "x", "ipa": "[ks]", "translation": "like the 'x' in 'box'" },
+        { "word": "y", "ipa": "[i]", "translation": "sounds like 'i'" }
+      ]
+    },
+    {
+      "type": "E",
+      "Etype": "choice",
+      "prompt": "What sound does the letter h make?",
+      "ipaHint": null,
+      "options": ["[h]", "[x]", "[g]", "[k]"],
+      "answer": "[x]"
     },
     {
       "type": "E",
       "Etype": "match",
       "pairs": [
-        [
-          "venite",
-          "hi"
-        ],
-        [
-          "qami",
-          "bye"
-        ],
-        [
-          "vinae",
-          "thank you"
-        ]
-      ]
-    },
-    {
-      "type": "E",
-      "Etype": "write",
-      "prompt": "Write the Arcon word for “thank you”.",
-      "speak": "vinae",
-      "ipaHint": null,
-      "answers": [
-        "vinae"
+        ["c", "[k]"],
+        ["j", "[ʒ]"],
+        ["x", "[ks]"]
       ]
     }
   ]
