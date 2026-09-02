@@ -1,0 +1,62 @@
+{
+  "id": "0-2",
+  "title": "Word Types",
+  "lesson": [
+    {
+      "type": "T",
+      "title": "Two types, one simple rule",
+      "theory": "Every word in Arcon belongs to one of two types, based only on its very last letter. Type 1: ends in a vowel (a, e, i, o, u, ū). Type 2: ends in anything else (a consonant). That's it — no exceptions, no lists to memorize. This one rule controls a lot of grammar you'll see later (how verbs change for tense, and more), so it's worth getting comfortable with it now, before there's any other grammar competing for your attention.",
+      "examples": []
+    },
+    {
+      "type": "T",
+      "title": "Type 1 — ends in a vowel",
+      "theory": "A few words you already know:",
+      "examples": [
+        { "word": "qite", "ipa": "", "translation": "hello — ends in e" },
+        { "word": "vū", "ipa": "", "translation": "you — ends in ū" }
+      ]
+    },
+    {
+      "type": "T",
+      "title": "Type 2 — ends in a consonant",
+      "theory": "And a couple that don't:",
+      "examples": [
+        { "word": "hūl", "ipa": "", "translation": "to want — ends in l" },
+        { "word": "es", "ipa": "", "translation": "to be — ends in s" }
+      ]
+    },
+    {
+      "type": "E",
+      "Etype": "choice",
+      "prompt": "vū ends in a vowel, so it's...",
+      "ipaHint": null,
+      "options": ["Type 1", "Type 2"],
+      "answer": "Type 1"
+    },
+    {
+      "type": "E",
+      "Etype": "choice",
+      "prompt": "hūl ends in a consonant, so it's...",
+      "ipaHint": null,
+      "options": ["Type 1", "Type 2"],
+      "answer": "Type 2"
+    },
+    {
+      "type": "E",
+      "Etype": "match",
+      "pairs": [
+        ["qite", "Type 1"],
+        ["vū", "Type 1"],
+        ["hūl", "Type 2"],
+        ["es", "Type 2"]
+      ]
+    },
+    {
+      "type": "T",
+      "title": "Keep this in mind",
+      "theory": "You'll run into Type 1 / Type 2 again very soon — for example, it decides exactly how a verb changes when you put it in the present tense. Whenever a new rule mentions \"Type 1\" or \"Type 2\", come back to this idea: just look at the last letter.",
+      "examples": []
+    }
+  ]
+}
