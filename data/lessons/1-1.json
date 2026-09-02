@@ -1,0 +1,67 @@
+{
+  "id": "1-1",
+  "title": "I / You",
+  "lesson": [
+    {
+      "type": "T",
+      "title": "Pronouns: I & You",
+      "theory": "Two of the most useful words in any language — talking about yourself, and talking to someone else.",
+      "examples": [
+        { "word": "vi", "ipa": "[vi]", "translation": "I" },
+        { "word": "vū", "ipa": "[vy]", "translation": "you" }
+      ]
+    },
+    {
+      "type": "T",
+      "title": "The verb \"to be\"",
+      "theory": "The infinitive is es. In the present tense, add -e (es ends in a consonant, so it follows the consonant-ending pattern).",
+      "examples": [
+        { "word": "es → ese", "ipa": "", "translation": "to be → am/is/are" }
+      ]
+    },
+    {
+      "type": "T",
+      "title": "Good and bad",
+      "theory": "Two simple describing words — they go right after the verb, same word order as in English.",
+      "examples": [
+        { "word": "ven", "ipa": "", "translation": "good" },
+        { "word": "am", "ipa": "", "translation": "bad" }
+      ]
+    },
+    {
+      "type": "T",
+      "title": "Putting it together",
+      "theory": "Subject + verb + description — the same order English uses, so these should feel familiar.",
+      "examples": [
+        { "word": "Vi ese ven.", "ipa": "", "translation": "I am good." },
+        { "word": "Vū ese am.", "ipa": "", "translation": "You are bad." }
+      ]
+    },
+    {
+      "type": "E",
+      "Etype": "choice",
+      "prompt": "What does \"Vi ese ven.\" mean?",
+      "ipaHint": null,
+      "options": ["I am good.", "You are good.", "I am bad."],
+      "answer": "I am good."
+    },
+    {
+      "type": "E",
+      "Etype": "match",
+      "pairs": [
+        ["vi", "I"],
+        ["vū", "you"],
+        ["ven", "good"],
+        ["am", "bad"]
+      ]
+    },
+    {
+      "type": "E",
+      "Etype": "write",
+      "prompt": "Unscramble these words into a correct sentence:\nven / vi / ese",
+      "speak": "Vi ese ven",
+      "ipaHint": null,
+      "answers": ["Vi ese ven", "Vi ese ven."]
+    }
+  ]
+}
