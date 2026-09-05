@@ -46,9 +46,7 @@
       "type": "E",
       "Etype": "match",
       "pairs": [
-        ["qite", "Type 1"],
         ["vū", "Type 1"],
-        ["hūl", "Type 2"],
         ["es", "Type 2"]
       ]
     },
