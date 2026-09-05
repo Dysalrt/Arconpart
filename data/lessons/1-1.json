@@ -59,7 +59,7 @@
       "type": "E",
       "Etype": "write",
       "prompt": "Unscramble these words into a correct sentence:\nven / vi / ese",
-      "speak": "Vi ese ven",
+      "speak": "",
       "ipaHint": null,
       "answers": ["Vi ese ven", "Vi ese ven."]
     }
