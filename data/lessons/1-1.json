@@ -1,0 +1,88 @@
+{
+  "id": "1-1",
+  "title": "Use present tense",
+  "xp": 10,
+  "lesson": [
+    {
+      "type": "T",
+      "title": "Infinitives",
+      "theory": "To start the lesson let's look at some basic infinitives of basic verbs",
+      "examples": [
+        {
+          "word": "es",
+          "ipa": "εs",
+          "translation": "to be"
+        },
+        {
+          "word": "jū",
+          "ipa": "jy",
+          "translation": "to have"
+        },
+        {
+          "word": "ro",
+          "ipa": "ro",
+          "translation": "to go"
+        },
+        {
+          "word": "ane",
+          "ipa": "ane",
+          "translation": "to do/to make"
+        }
+      ]
+    },
+    {
+      "type": "T",
+      "title": "Verbs conjugation",
+      "theory": "To create an usable verb in present tense you have to follow the algorithm \nIf verb's infinitive is in class I -> add +de to the end of the word\nIf verb's infinitive is in class II -> ad +e to the end of the word",
+      "examples": [
+        {
+          "word": "ese(from es)",
+          "ipa": "e'se",
+          "translation": "am/are/is"
+        },
+        {
+          "word": "jūde(from jū)",
+          "ipa": "'jy'de",
+          "translation": "have/has"
+        },
+        {
+          "word": "rode(from ro)",
+          "ipa": "ro'de",
+          "translation": "go/goes"
+        },
+        {
+          "word": "anede",
+          "ipa": "anε'dε",
+          "translation": "do/does"
+        }
+      ]
+    },
+    {
+      "type": "E",
+      "Etype": "choice",
+      "prompt": "If the verb's infinitive is from class II, what suffix should we add to it?",
+      "options": [
+        "+e",
+        "+de"
+      ],
+      "answer": "+e"
+    },
+    {
+      "type": "E",
+      "Etype": "write",
+      "prompt": "Translate the sentence\nI am good",
+      "answers": [
+        "Vi ese ven",
+        "Vi'se ven"
+      ]
+    },
+    {
+      "type": "E",
+      "Etype": "write",
+      "prompt": "Translate the sentence\nYou have",
+      "answers": [
+        "Vū jūde"
+      ]
+    }
+  ]
+}
