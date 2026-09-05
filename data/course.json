@@ -27,7 +27,14 @@
     {
       "id": "1",
       "title": "Understand words changing",
-      "lessons": []
+      "lessons": [
+        {
+          "id": "1-1",
+          "title": "Use present tense",
+          "subtitle": "Learn how to speak in present",
+          "file": "1-1.json"
+        }
+      ]
     }
   ]
 }
