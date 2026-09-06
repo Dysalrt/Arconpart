@@ -1,190 +1,557 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="ru">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Arcon Lesson Builder</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Конструктор уроков Arcon v2</title>
 <style>
-:root{--bg:#f4f5f8;--panel:#fff;--text:#20242c;--muted:#687080;--border:#d9dde5;--accent:#5b50c9;--accent-soft:#efedff;--danger:#b83b4a;--ok:#287a55;--radius:12px}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
-header{background:var(--panel);border-bottom:1px solid var(--border);padding:16px 20px;position:sticky;top:0;z-index:5}
-header h1{margin:0;font-size:20px}header p{margin:3px 0 0;color:var(--muted);font-size:13px}
-main{width:min(900px,calc(100% - 24px));margin:22px auto 50px}
-.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:16px}
-.grid{display:grid;grid-template-columns:1fr 2fr 110px;gap:12px}
-label{display:block;font-weight:700;margin-bottom:5px}small,.hint{color:var(--muted);font-size:12px}
-input,textarea,select{width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 10px;background:#fff;color:var(--text);font:inherit}
-textarea{min-height:92px;resize:vertical}
-button{border:1px solid var(--border);border-radius:8px;padding:8px 11px;background:#fff;color:var(--text);cursor:pointer}
-button:hover{border-color:var(--accent)}button:disabled{opacity:.45;cursor:not-allowed}
-.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:750}.danger{color:var(--danger)}.toolbar{display:flex;gap:8px;flex-wrap:wrap}
-.list{display:grid;gap:10px}.item{border:1px solid var(--border);border-radius:10px;background:#fafbfc;overflow:hidden}
-.item-head{display:flex;align-items:center;gap:8px;padding:9px 10px;background:#f0f1f5;border-bottom:1px solid var(--border)}
-.tag{font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;padding:4px 7px;border-radius:6px;background:var(--accent-soft);color:var(--accent)}
-.item-title{font-weight:750;flex:1}.move{padding:4px 8px}.item-body{padding:13px}
-.fields{display:grid;gap:12px}.example,.option,.pair,.answer{display:grid;gap:8px;grid-template-columns:1fr 1fr 1fr auto;align-items:end;border:1px solid var(--border);border-radius:8px;padding:9px;margin-top:8px;background:#fff}
-.option{grid-template-columns:1fr auto}.pair{grid-template-columns:1fr 1fr auto}.answer{grid-template-columns:1fr auto}
-.subhead{display:flex;align-items:center;justify-content:space-between;margin-top:13px}.subhead strong{font-size:13px}
-.actions{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
-#message{display:none;margin-bottom:12px;padding:10px 12px;border-radius:8px;background:#fff0f2;color:var(--danger);border:1px solid #efc2c8}
-#output{display:none}.raw{min-height:320px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px}
-@media(max-width:650px){.grid{grid-template-columns:1fr}.example{grid-template-columns:1fr}.option,.pair,.answer{grid-template-columns:1fr}.item-head{flex-wrap:wrap}}
+  :root {
+    --accent: #4f4bed;
+    --accent-soft: #eceafd;
+    --bg: #faf9fc;
+    --panel: #ffffff;
+    --border: #e3e1ec;
+    --text: #1c1c1e;
+    --hint: #75758a;
+    --danger: #e5484d;
+    --danger-soft: #fceeee;
+    --theory-tag: #2e7d32;
+    --theory-tag-soft: #e8f5e9;
+    --ex-tag: #b8860b;
+    --ex-tag-soft: #fff8e1;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 24px;
+    line-height: 1.4;
+  }
+  .p1-wrap { max-width: 780px; margin: 0 auto; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .p1-subtitle { color: var(--hint); font-size: 14px; margin: 0 0 24px; }
+  .p1-toolbar {
+    display: flex; gap: 10px; position: sticky; top: 0;
+    background: var(--bg); padding: 12px 0; z-index: 10;
+    border-bottom: 1px solid var(--border); margin-bottom: 20px;
+  }
+  button { font-family: inherit; cursor: pointer; border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px; font-weight: 600; }
+  .p1-btn-primary { background: var(--accent); color: #fff; }
+  .p1-btn-danger { background: var(--danger-soft); color: var(--danger); }
+  .p1-btn-ghost { background: var(--accent-soft); color: var(--accent); }
+  .p1-btn-small { padding: 6px 10px; font-size: 13px; font-weight: 500; }
+  .p1-btn-remove { background: none; color: var(--danger); font-size: 13px; padding: 4px 8px; }
+  .p1-btn-move { background: var(--border); color: var(--text); font-size: 13px; padding: 4px 8px; }
+
+  section.p1-section {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px; margin-bottom: 18px;
+  }
+  section.p1-section > h2 {
+    font-size: 15px; text-transform: uppercase; letter-spacing: 0.03em;
+    color: var(--hint); margin: 0 0 14px;
+  }
+
+  label { display: block; font-size: 12px; color: var(--hint); margin: 10px 0 4px; }
+  label:first-of-type { margin-top: 0; }
+
+  input[type="text"], input[type="number"], textarea, select {
+    width: 100%; padding: 10px 12px; border: 1px solid var(--border);
+    border-radius: 10px; font-size: 14px; font-family: inherit;
+    background: #fff; color: var(--text);
+  }
+  textarea { resize: vertical; min-height: 54px; }
+  input:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent); }
+
+  .p1-row-inline { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+  .p1-row-inline input { flex: 1; }
+
+  .p1-item {
+    border: 1px solid var(--border); border-radius: 12px; padding: 14px;
+    margin-bottom: 12px; background: #fcfcfe;
+  }
+  .p1-item-header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 8px;
+  }
+  .p1-item-header-left { display: flex; align-items: center; gap: 8px; }
+  .p1-item-tag {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 6px; letter-spacing: 0.03em;
+  }
+  .p1-item-tag.theory { color: var(--theory-tag); background: var(--theory-tag-soft); }
+  .p1-item-tag.exercise { color: var(--ex-tag); background: var(--ex-tag-soft); }
+  .p1-item-header-actions { display: flex; gap: 4px; }
+
+  .p1-example-row, .p1-pair-row {
+    display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 6px; margin-bottom: 6px;
+  }
+  .p1-pair-row { grid-template-columns: 1fr 1fr auto; }
+
+  .p1-basic-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; }
+
+  #p1-json-output {
+    width: 100%; min-height: 220px; font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12px; white-space: pre;
+  }
+  .p1-output-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .p1-empty-hint { color: var(--hint); font-size: 13px; font-style: italic; }  .p1-hidden { display: none !important; }
 </style>
 </head>
 <body>
-<header><h1>Arcon Lesson Builder</h1><p>Build lesson JSON for the Arcon Learning App without hand-writing JSON.</p></header>
-<main>
-<div id="message"></div>
+<div class="p1-wrap">
+  <h1>Конструктор уроков Arcon</h1>
+  <p class="p1-subtitle">Теория и задания — один общий список, порядок важен: перемещай карточки стрелками ▲▼</p>
 
-<section class="panel">
-  <h2>Lesson details</h2>
-  <div class="grid">
-    <div><label for="lessonId">Lesson ID</label><input id="lessonId" placeholder="3-1"></div>
-    <div><label for="lessonTitle">Title</label><input id="lessonTitle" placeholder="Lesson title"></div>
-    <div><label for="xp">XP</label><input id="xp" type="number" value="10"></div>
+  <div class="p1-toolbar">
+    <button id="p1-load-btn" class="p1-btn-ghost">Load lesson</button>
+    <input type="file" id="p1-load-file" accept="application/json,.json" class="p1-hidden">
+    <button id="p1-clear-btn" class="p1-btn-danger">Clear lesson</button>
+    <button id="p1-create-btn" class="p1-btn-primary">Create lesson</button>
   </div>
-</section>
 
-<section class="panel">
-  <div class="actions">
-    <div><h2 style="margin:0">Lesson items</h2><div class="hint">Theory and exercises share one ordered list. Reorder them with ▲ and ▼.</div></div>
-    <div class="toolbar"><button id="addTheory">+ Add Theory</button><button id="addExercise">+ Add Exercise</button></div>
-  </div>
-  <div id="items" class="list" style="margin-top:14px"></div>
-  <div class="toolbar" style="margin-top:12px"><button id="addTheory2">+ Add Theory</button><button id="addExercise2">+ Add Exercise</button></div>
-</section>
+  <section class="p1-section">
+    <h2>Основное</h2>
+    <div class="p1-basic-grid">
+      <div>
+        <label for="p1-id-input">ID урока (например 3-1)</label>
+        <input type="text" id="p1-id-input" placeholder="3-1">
+      </div>
+      <div>
+        <label for="p1-xp-input">XP</label>
+        <input type="number" id="p1-xp-input" value="10">
+      </div>
+    </div>
+    <label for="p1-title-input">Название урока</label>
+    <input type="text" id="p1-title-input" placeholder="Множественное число">
+  </section>
 
-<section class="panel">
-  <div class="actions">
-    <button id="clear" class="danger">Clear</button>
-    <button id="create" class="primary">Create</button>
-  </div>
-</section>
+  <section class="p1-section">
+    <h2>Содержимое урока (по порядку)</h2>
+    <div id="p1-items-list"></div>
+    <div class="p1-row-inline">
+      <button id="p1-add-theory-btn" class="p1-btn-ghost p1-btn-small">+ Теория</button>
+      <button id="p1-add-exercise-btn" class="p1-btn-ghost p1-btn-small">+ Задание</button>
+    </div>
+  </section>
 
-<section id="output" class="panel">
-  <div class="actions"><h2 style="margin:0">Generated JSON</h2><button id="copy">Copy</button></div>
-  <textarea id="raw" class="raw" readonly></textarea>
-</section>
-</main>
+  <section class="p1-section">
+    <h2>Результат</h2>
+    <p class="p1-empty-hint" id="p1-output-hint">Нажми «Create lesson», чтобы собрать JSON.</p>
+    <textarea id="p1-json-output" readonly placeholder="Здесь появится готовый JSON..."></textarea>
+    <div class="p1-output-actions">
+      <button id="p1-copy-btn" class="p1-btn-ghost p1-btn-small">Скопировать</button>
+    </div>
+  </section>
+</div>
 
 <script>
-"use strict";
-const $=s=>document.querySelector(s);
-const items=$("#items"), message=$("#message");
+(function () {
+  const list = document.getElementById("p1-items-list");
 
-function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function input(label,cls="",value="",ph=""){return `<div><label>${esc(label)}</label><input class="${cls}" value="${esc(value)}" placeholder="${esc(ph)}"></div>`}
-function textarea(label,cls="",value="",ph=""){return `<div><label>${esc(label)}</label><textarea class="${cls}" placeholder="${esc(ph)}">${esc(value)}</textarea></div>`}
+  // ---------- Общие утилиты для карточек в списке ----------
 
-function addTheory(){
- const el=document.createElement("div");el.className="item";el.dataset.type="T";
- el.innerHTML=`<div class="item-head"><span class="tag">Theory</span><span class="item-title">Theory card</span>
- <button class="move up" title="Move up">▲</button><button class="move down" title="Move down">▼</button><button class="danger remove">Remove</button></div>
- <div class="item-body"><div class="fields">
- ${input("Title","t-title","","Theory title")}
- ${textarea("Body text","t-theory","","Explain the concept here…")}
- <div><div class="subhead"><strong>Examples</strong><button class="add-example">+ Add example</button></div><div class="examples"></div></div>
- </div></div>`;
- items.appendChild(el);addExample(el);wireItem(el);
-}
-function addExample(parent){
- const box=document.createElement("div");box.className="example";
- box.innerHTML=`${input("Arcon word","ex-word","","Arcon word")}${input("IPA / note","ex-ipa","","IPA or pronunciation note")}${input("Translation","ex-trans","","English translation")}<button class="danger remove-row">Remove</button>`;
- parent.querySelector(".examples").appendChild(box);
-}
-function addExercise(){
- const el=document.createElement("div");el.className="item";el.dataset.type="E";el.dataset.etype="choice";
- el.innerHTML=`<div class="item-head"><span class="tag">Exercise</span><span class="item-title">Exercise</span>
- <button class="move up">▲</button><button class="move down">▼</button><button class="danger remove">Remove</button></div>
- <div class="item-body"><div class="fields">
- <div><label>Exercise type</label><select class="etype"><option value="choice">choice</option><option value="match">match</option><option value="write">write</option></select></div>
- <div class="exercise-fields"></div></div></div>`;
- items.appendChild(el);wireItem(el);renderExercise(el,"choice");
-}
-function choiceFields(el){
- return `${textarea("Prompt","e-prompt","","Question or instruction…")}
- ${input("Optional IPA hint","e-ipa","","Leave blank if not needed")}
- <div><div class="subhead"><strong>Options</strong><button class="add-option">+ Add option</button></div><div class="options"></div><div class="hint">Answer should exactly match one of the options. The builder does not enforce this.</div></div>
- ${input("Answer","e-answer","","Exact correct option")}`;
-}
-function matchFields(el){
- return `<div><div class="subhead"><strong>Pairs</strong><button class="add-pair">+ Add pair</button></div><div class="pairs"></div></div>`;
-}
-function writeFields(el){
- return `${textarea("Prompt","e-prompt","","Instruction…")}
- ${input("Optional speak","e-speak","","Exact Arcon text for 🔊 pronunciation")}
- ${input("Optional IPA hint","e-ipa","","Leave blank if not needed")}
- <div><div class="subhead"><strong>Accepted answers</strong><button class="add-answer">+ Add answer</button></div><div class="answers"></div></div>`;
-}
-function renderExercise(el,type){
- el.dataset.etype=type;el.querySelector(".exercise-fields").innerHTML=type==="choice"?choiceFields(el):type==="match"?matchFields(el):writeFields(el);
- if(type==="choice"){addOption(el);addOption(el)}
- if(type==="match"){addPair(el);addPair(el)}
- if(type==="write"){addAnswer(el)}
- wireRows(el);
-}
-function addOption(p){const b=document.createElement("div");b.className="option";b.innerHTML=`${input("Option","row-value","","Option text")}<button class="danger remove-row">Remove</button>`;p.querySelector(".options").appendChild(b)}
-function addPair(p){const b=document.createElement("div");b.className="pair";b.innerHTML=`${input("Arcon word","pair-word","","Arcon word")}${input("Translation","pair-trans","","English translation")}<button class="danger remove-row">Remove</button>`;p.querySelector(".pairs").appendChild(b)}
-function addAnswer(p){const b=document.createElement("div");b.className="answer";b.innerHTML=`${input("Accepted answer","row-value","","Accepted answer")}<button class="danger remove-row">Remove</button>`;p.querySelector(".answers").appendChild(b)}
-function wireRows(el){
- el.querySelectorAll(".add-option").forEach(b=>b.onclick=()=>addOption(el));
- el.querySelectorAll(".add-pair").forEach(b=>b.onclick=()=>addPair(el));
- el.querySelectorAll(".add-answer").forEach(b=>b.onclick=()=>addAnswer(el));
- el.querySelectorAll(".remove-row").forEach(b=>b.onclick=()=>b.parentElement.remove());
-}
-function wireItem(el){
- el.querySelector(".remove").onclick=()=>el.remove();
- el.querySelector(".up").onclick=()=>{const p=el.previousElementSibling;if(p)items.insertBefore(el,p)};
- el.querySelector(".down").onclick=()=>{const n=el.nextElementSibling;if(n)items.insertBefore(n,el)};
- el.querySelector(".add-example")?.addEventListener("click",()=>addExample(el));
- el.querySelector(".etype")?.addEventListener("change",e=>renderExercise(el,e.target.value));
- wireRows(el);
-}
-
-function addT(){addTheory()}function addE(){addExercise()}
-["addTheory","addTheory2"].forEach(id=>$("#"+id).onclick=addT);
-["addExercise","addExercise2"].forEach(id=>$("#"+id).onclick=addE);
-
-function val(el,cls){return el.querySelector("."+cls)?.value??""}
-function build(){
- const id=$("#lessonId").value.trim();if(!id){message.textContent="Please enter a Lesson ID before creating the JSON.";message.style.display="block";$("#lessonId").focus();return null}
- message.style.display="none";
- const out={id,title:$("#lessonTitle").value.trim(),xp:Number($("#xp").value)||0,lesson:[]};
- items.querySelectorAll(":scope > .item").forEach(el=>{
-  if(el.dataset.type==="T"){
-   const x={type:"T",title:val(el,"t-title"),theory:val(el,"t-theory"),examples:[]};
-   el.querySelectorAll(".example").forEach(r=>x.examples.push({word:val(r,"ex-word"),ipa:val(r,"ex-ipa"),translation:val(r,"ex-trans")}));
-   out.lesson.push(x);
-  }else{
-   const type=el.dataset.etype;
-   if(type==="choice"){
-    const x={type:"E",Etype:"choice",prompt:val(el,"e-prompt"),ipaHint:null,options:[],answer:val(el,"e-answer")};
-    const ipa=val(el,"e-ipa");if(ipa)x.ipaHint=ipa;
-    el.querySelectorAll(".option .row-value").forEach(i=>x.options.push(i.value));
-    if(!ipa)delete x.ipaHint;
-    out.lesson.push(x);
-   }else if(type==="match"){
-    const x={type:"E",Etype:"match",pairs:[]};
-    el.querySelectorAll(".pair").forEach(r=>x.pairs.push([val(r,"pair-word"),val(r,"pair-trans")]));
-    out.lesson.push(x);
-   }else{
-    const x={type:"E",Etype:"write",prompt:val(el,"e-prompt"),answers:[]};
-    const speak=val(el,"e-speak"),ipa=val(el,"e-ipa");if(speak)x.speak=speak;if(ipa)x.ipaHint=ipa;
-    el.querySelectorAll(".answer .row-value").forEach(i=>x.answers.push(i.value));
-    out.lesson.push(x);
-   }
+  function moveItem(item, direction) {
+    if (direction === "up" && item.previousElementSibling) {
+      list.insertBefore(item, item.previousElementSibling);
+    } else if (direction === "down" && item.nextElementSibling) {
+      list.insertBefore(item.nextElementSibling, item);
+    }
   }
- });
- return out;
-}
-$("#create").onclick=()=>{
- const data=build();if(!data)return;
- const json=JSON.stringify(data,null,2),blob=new Blob([json],{type:"application/json"});
- const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=data.id+".json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
- $("#raw").value=json;$("#output").style.display="block";$("#output").scrollIntoView({behavior:"smooth"});
-};
-$("#copy").onclick=async()=>{try{await navigator.clipboard.writeText($("#raw").value);$("#copy").textContent="Copied!";setTimeout(()=>$("#copy").textContent="Copy",1200)}catch{$("#raw").select();document.execCommand("copy");$("#copy").textContent="Copied!"}};
-$("#clear").onclick=()=>{if(!confirm("Clear the entire lesson form? This cannot be undone."))return;$("#lessonId").value="";$("#lessonTitle").value="";$("#xp").value="10";items.innerHTML="";$("#output").style.display="none";$("#raw").value="";message.style.display="none"};
+
+  function makeItemHeader(tagLabel, tagClass, item) {
+    const header = document.createElement("div");
+    header.className = "p1-item-header";
+    header.innerHTML = `
+      <div class="p1-item-header-left">
+        <span class="p1-item-tag ${tagClass}">${tagLabel}</span>
+      </div>
+      <div class="p1-item-header-actions">
+        <button class="p1-btn-move p1-move-up" type="button">▲</button>
+        <button class="p1-btn-move p1-move-down" type="button">▼</button>
+        <button class="p1-btn-remove p1-remove-item" type="button">Удалить</button>
+      </div>
+    `;
+    header.querySelector(".p1-move-up").onclick = () => moveItem(item, "up");
+    header.querySelector(".p1-move-down").onclick = () => moveItem(item, "down");
+    header.querySelector(".p1-remove-item").onclick = () => item.remove();
+    return header;
+  }
+
+  // ---------- Теория ----------
+
+  function makeExampleRow() {
+    const row = document.createElement("div");
+    row.className = "p1-example-row";
+    row.innerHTML = `
+      <input type="text" class="p1-ex-word" placeholder="Слово (Arcon)">
+      <input type="text" class="p1-ex-ipa" placeholder="IPA / пометка">
+      <input type="text" class="p1-ex-translation" placeholder="Перевод">
+      <button class="p1-btn-remove" type="button">✕</button>
+    `;
+    row.querySelector(".p1-btn-remove").onclick = () => row.remove();
+    return row;
+  }
+
+  function makeTheoryItem() {
+    const item = document.createElement("div");
+    item.className = "p1-item p1-theory-item";
+    item.appendChild(makeItemHeader("Теория", "theory", item));
+
+    const body = document.createElement("div");
+    body.innerHTML = `
+      <label>Заголовок</label>
+      <input type="text" class="p1-t-title" placeholder="Например: Множественное число">
+      <label>Текст объяснения</label>
+      <textarea class="p1-t-theory" placeholder="Объясни правило своими словами..."></textarea>
+      <label>Примеры</label>
+      <div class="p1-t-examples"></div>
+      <button class="p1-btn-ghost p1-btn-small p1-add-example-btn" type="button">+ Пример</button>
+    `;
+    body.querySelector(".p1-add-example-btn").onclick = () => {
+      body.querySelector(".p1-t-examples").appendChild(makeExampleRow());
+    };
+    body.querySelector(".p1-t-examples").appendChild(makeExampleRow());
+    item.appendChild(body);
+
+    return item;
+  }
+
+  document.getElementById("p1-add-theory-btn").onclick = () => {
+    list.appendChild(makeTheoryItem());
+  };
+
+  // ---------- Задания ----------
+
+  function makeOptionRow(container) {
+    const row = document.createElement("div");
+    row.className = "p1-row-inline";
+    row.innerHTML = `
+      <input type="text" class="p1-e-choice-option" placeholder="Вариант ответа">
+      <button class="p1-btn-remove" type="button">✕</button>
+    `;
+    row.querySelector(".p1-btn-remove").onclick = () => row.remove();
+    container.appendChild(row);
+  }
+
+  function makePairRow(container) {
+    const row = document.createElement("div");
+    row.className = "p1-pair-row";
+    row.innerHTML = `
+      <input type="text" class="p1-e-match-word" placeholder="Слово (Arcon)">
+      <input type="text" class="p1-e-match-translation" placeholder="Перевод">
+      <button class="p1-btn-remove" type="button">✕</button>
+    `;
+    row.querySelector(".p1-btn-remove").onclick = () => row.remove();
+    container.appendChild(row);
+  }
+
+  function makeAnswerRow(container) {
+    const row = document.createElement("div");
+    row.className = "p1-row-inline";
+    row.innerHTML = `
+      <input type="text" class="p1-e-write-answer" placeholder="Правильный ответ">
+      <button class="p1-btn-remove" type="button">✕</button>
+    `;
+    row.querySelector(".p1-btn-remove").onclick = () => row.remove();
+    container.appendChild(row);
+  }
+
+  function renderChoiceFields(fieldsEl) {
+    fieldsEl.innerHTML = `
+      <label>Вопрос</label>
+      <textarea class="p1-e-choice-prompt" placeholder="Как будет «Привет»?"></textarea>
+      <label>IPA-подсказка (необязательно)</label>
+      <input type="text" class="p1-e-choice-ipahint" placeholder="[ˈkji.tɛ]">
+      <label>Варианты ответа</label>
+      <div class="p1-e-choice-options"></div>
+      <button class="p1-btn-ghost p1-btn-small p1-add-option-btn" type="button">+ Вариант</button>
+      <label>Правильный ответ (должен точно совпасть с одним из вариантов)</label>
+      <input type="text" class="p1-e-choice-answer" placeholder="Qite">
+    `;
+    const optionsList = fieldsEl.querySelector(".p1-e-choice-options");
+    fieldsEl.querySelector(".p1-add-option-btn").onclick = () => makeOptionRow(optionsList);
+    makeOptionRow(optionsList);
+    makeOptionRow(optionsList);
+  }
+
+  function renderMatchFields(fieldsEl) {
+    fieldsEl.innerHTML = `
+      <label>Пары для сопоставления</label>
+      <div class="p1-e-match-pairs"></div>
+      <button class="p1-btn-ghost p1-btn-small p1-add-pair-btn" type="button">+ Пара</button>
+    `;
+    const pairsList = fieldsEl.querySelector(".p1-e-match-pairs");
+    fieldsEl.querySelector(".p1-add-pair-btn").onclick = () => makePairRow(pairsList);
+    makePairRow(pairsList);
+    makePairRow(pairsList);
+  }
+
+  function renderWriteFields(fieldsEl) {
+    fieldsEl.innerHTML = `
+      <label>Задание (можно с переносом строки — фраза на новой строке)</label>
+      <textarea class="p1-e-write-prompt" placeholder="Переведи фразу:&#10;Qo ede vū?"></textarea>
+      <label>Что озвучить по кнопке 🔊 (необязательно, пиши на Arcon без знаков препинания)</label>
+      <input type="text" class="p1-e-write-speak" placeholder="Qo ede vū">
+      <label>IPA-подсказка (необязательно)</label>
+      <input type="text" class="p1-e-write-ipahint" placeholder="">
+      <label>Правильные ответы</label>
+      <div class="p1-e-write-answers"></div>
+      <button class="p1-btn-ghost p1-btn-small p1-add-answer-btn" type="button">+ Ответ</button>
+    `;
+    const answersList = fieldsEl.querySelector(".p1-e-write-answers");
+    fieldsEl.querySelector(".p1-add-answer-btn").onclick = () => makeAnswerRow(answersList);
+    makeAnswerRow(answersList);
+  }
+
+  function makeExerciseItem() {
+    const item = document.createElement("div");
+    item.className = "p1-item p1-exercise-item";
+    item.appendChild(makeItemHeader("Задание", "exercise", item));
+
+    const body = document.createElement("div");
+    body.innerHTML = `
+      <label>Тип задания (Etype)</label>
+      <select class="p1-e-etype-select">
+        <option value="choice">choice — выбор варианта</option>
+        <option value="match">match — сопоставление пар</option>
+        <option value="write">write — открытый ответ</option>
+      </select>
+      <div class="p1-e-fields"></div>
+    `;
+    item.appendChild(body);
+
+    const fieldsEl = body.querySelector(".p1-e-fields");
+    const typeSelect = body.querySelector(".p1-e-etype-select");
+
+    function renderForType() {
+      if (typeSelect.value === "choice") renderChoiceFields(fieldsEl);
+      else if (typeSelect.value === "match") renderMatchFields(fieldsEl);
+      else if (typeSelect.value === "write") renderWriteFields(fieldsEl);
+    }
+    typeSelect.onchange = renderForType;
+    renderForType();
+
+    return item;
+  }
+
+  document.getElementById("p1-add-exercise-btn").onclick = () => {
+    list.appendChild(makeExerciseItem());
+  };
+
+  // ---------- Загрузка существующего урока ----------
+
+  function fillTheoryItem(item, data) {
+    item.querySelector(".p1-t-title").value = data.title || "";
+    item.querySelector(".p1-t-theory").value = data.theory || "";
+    const examplesContainer = item.querySelector(".p1-t-examples");
+    examplesContainer.innerHTML = ""; // убираем дефолтную пустую строку из makeTheoryItem()
+    (data.examples || []).forEach((ex) => {
+      const row = makeExampleRow();
+      row.querySelector(".p1-ex-word").value = ex.word || "";
+      row.querySelector(".p1-ex-ipa").value = ex.ipa || "";
+      row.querySelector(".p1-ex-translation").value = ex.translation || "";
+      examplesContainer.appendChild(row);
+    });
+  }
+
+  function fillExerciseItem(item, data) {
+    const select = item.querySelector(".p1-e-etype-select");
+    const fieldsEl = item.querySelector(".p1-e-fields");
+    select.value = data.Etype || "choice";
+
+    if (data.Etype === "match") {
+      renderMatchFields(fieldsEl);
+      const pairsList = fieldsEl.querySelector(".p1-e-match-pairs");
+      pairsList.innerHTML = "";
+      (data.pairs || []).forEach((pair) => {
+        makePairRow(pairsList);
+        const row = pairsList.lastElementChild;
+        row.querySelector(".p1-e-match-word").value = (pair && pair[0]) || "";
+        row.querySelector(".p1-e-match-translation").value = (pair && pair[1]) || "";
+      });
+    } else if (data.Etype === "write") {
+      renderWriteFields(fieldsEl);
+      fieldsEl.querySelector(".p1-e-write-prompt").value = data.prompt || "";
+      fieldsEl.querySelector(".p1-e-write-speak").value = data.speak || "";
+      fieldsEl.querySelector(".p1-e-write-ipahint").value = data.ipaHint || "";
+      const answersList = fieldsEl.querySelector(".p1-e-write-answers");
+      answersList.innerHTML = "";
+      (data.answers || []).forEach((ans) => {
+        makeAnswerRow(answersList);
+        answersList.lastElementChild.querySelector(".p1-e-write-answer").value = ans || "";
+      });
+    } else {
+      // choice — тоже дефолт, если Etype не распознан
+      renderChoiceFields(fieldsEl);
+      fieldsEl.querySelector(".p1-e-choice-prompt").value = data.prompt || "";
+      fieldsEl.querySelector(".p1-e-choice-ipahint").value = data.ipaHint || "";
+      const optionsList = fieldsEl.querySelector(".p1-e-choice-options");
+      optionsList.innerHTML = "";
+      (data.options || []).forEach((opt) => {
+        makeOptionRow(optionsList);
+        optionsList.lastElementChild.querySelector(".p1-e-choice-option").value = opt || "";
+      });
+      fieldsEl.querySelector(".p1-e-choice-answer").value = data.answer || "";
+    }
+  }
+
+  function loadLessonIntoForm(data) {
+    document.getElementById("p1-id-input").value = data.id || "";
+    document.getElementById("p1-title-input").value = data.title || "";
+    document.getElementById("p1-xp-input").value = data.xp || 10;
+    list.innerHTML = "";
+
+    (data.lesson || []).forEach((entry) => {
+      if (entry.type === "T") {
+        const item = makeTheoryItem();
+        fillTheoryItem(item, entry);
+        list.appendChild(item);
+      } else if (entry.type === "E") {
+        const item = makeExerciseItem();
+        fillExerciseItem(item, entry);
+        list.appendChild(item);
+      }
+    });
+
+    document.getElementById("p1-output-hint").textContent =
+      `Loaded "${data.id || "lesson"}" — edit below, then Create lesson to export.`;
+  }
+
+  document.getElementById("p1-load-btn").onclick = () => {
+    document.getElementById("p1-load-file").click();
+  };
+
+  document.getElementById("p1-load-file").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result);
+        loadLessonIntoForm(data);
+      } catch (err) {
+        alert("Couldn't read this file as a lesson JSON: " + err.message);
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = ""; // сброс — чтобы можно было загрузить тот же файл повторно
+  });
+
+  // ---------- Сборка JSON ----------
+
+  function buildLesson() {
+    const lesson = {
+      id: document.getElementById("p1-id-input").value.trim(),
+      title: document.getElementById("p1-title-input").value.trim(),
+      xp: parseInt(document.getElementById("p1-xp-input").value, 10) || 10,
+      lesson: [],
+    };
+
+    // Порядок в итоговом JSON = порядок карточек в DOM (управляется стрелками ▲▼)
+    [...list.children].forEach((item) => {
+      if (item.classList.contains("p1-theory-item")) {
+        const title = item.querySelector(".p1-t-title").value.trim();
+        const theory = item.querySelector(".p1-t-theory").value.trim();
+        const examples = [];
+        item.querySelectorAll(".p1-example-row").forEach((row) => {
+          const word = row.querySelector(".p1-ex-word").value.trim();
+          const ipa = row.querySelector(".p1-ex-ipa").value.trim();
+          const translation = row.querySelector(".p1-ex-translation").value.trim();
+          if (word) examples.push({ word, ipa, translation });
+        });
+        if (title || theory || examples.length) {
+          lesson.lesson.push({ type: "T", title, theory, examples });
+        }
+      } else if (item.classList.contains("p1-exercise-item")) {
+        const etype = item.querySelector(".p1-e-etype-select").value;
+
+        if (etype === "choice") {
+          const prompt = item.querySelector(".p1-e-choice-prompt").value.trim();
+          const ipaHint = item.querySelector(".p1-e-choice-ipahint").value.trim() || null;
+          const options = [...item.querySelectorAll(".p1-e-choice-option")]
+            .map((i) => i.value.trim())
+            .filter((v) => v);
+          const answer = item.querySelector(".p1-e-choice-answer").value.trim();
+          if (prompt && options.length) {
+            lesson.lesson.push({ type: "E", Etype: "choice", prompt, ipaHint, options, answer });
+          }
+        } else if (etype === "match") {
+          const pairs = [...item.querySelectorAll(".p1-pair-row")]
+            .map((row) => [
+              row.querySelector(".p1-e-match-word").value.trim(),
+              row.querySelector(".p1-e-match-translation").value.trim(),
+            ])
+            .filter((p) => p[0] && p[1]);
+          if (pairs.length) {
+            lesson.lesson.push({ type: "E", Etype: "match", pairs });
+          }
+        } else if (etype === "write") {
+          const prompt = item.querySelector(".p1-e-write-prompt").value.trim();
+          const speak = item.querySelector(".p1-e-write-speak").value.trim() || null;
+          const ipaHint = item.querySelector(".p1-e-write-ipahint").value.trim() || null;
+          const answers = [...item.querySelectorAll(".p1-e-write-answer")]
+            .map((i) => i.value.trim())
+            .filter((v) => v);
+          if (prompt && answers.length) {
+            lesson.lesson.push({ type: "E", Etype: "write", prompt, speak, ipaHint, answers });
+          }
+        }
+      }
+    });
+
+    return lesson;
+  }
+
+  function downloadFile(filename, content) {
+    const blob = new Blob([content], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  document.getElementById("p1-create-btn").onclick = () => {
+    const lesson = buildLesson();
+    if (!lesson.id) {
+      alert("Заполни ID урока — без него не получится назвать файл.");
+      return;
+    }
+    const json = JSON.stringify(lesson, null, 2);
+    const output = document.getElementById("p1-json-output");
+    output.value = json;
+    document.getElementById("p1-output-hint").textContent =
+      `Готово — файл "${lesson.id}.json" скачался. Также можешь скопировать текст ниже.`;
+    downloadFile(lesson.id + ".json", json);
+  };
+
+  document.getElementById("p1-copy-btn").onclick = () => {
+    const output = document.getElementById("p1-json-output");
+    if (!output.value) return;
+    output.select();
+    document.execCommand("copy");
+  };
+
+  document.getElementById("p1-clear-btn").onclick = () => {
+    if (!confirm("Точно сбросить весь урок? Все введённые данные пропадут.")) return;
+    document.getElementById("p1-id-input").value = "";
+    document.getElementById("p1-title-input").value = "";
+    document.getElementById("p1-xp-input").value = "10";
+    list.innerHTML = "";
+    document.getElementById("p1-json-output").value = "";
+    document.getElementById("p1-output-hint").textContent = "Нажми «Create lesson», чтобы собрать JSON.";
+  };
+
+  // Стартовое состояние — одна теория и одно задание, чтобы было видно, с чего начать
+  list.appendChild(makeTheoryItem());
+  list.appendChild(makeExerciseItem());
+})();
 </script>
 </body>
 </html>
