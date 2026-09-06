@@ -33,6 +33,12 @@
           "title": "Use present tense",
           "subtitle": "Learn how to speak in present",
           "file": "1-1.json"
+        },
+        {
+          "id": "1-2",
+          "title": "Possessions",
+          "subtitle": "Learn how to express possessions",
+          "file": "1-2.json"
         }
       ]
     }
