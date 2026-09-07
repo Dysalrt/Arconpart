@@ -1,61 +1,81 @@
+// js/tts.js
+
 const manualOverrides = {
-  // Add entries such as: "qite": "kee-te"
+  // Explicit pronunciation for alis: Arcon [alis]
+  alis: "ah-lees"
 };
 
 const map = {
-  a: "ah",
-  b: "b",
+  ū: "you",
+  j: "y",
+  q: "kee",
   c: "k",
-  d: "d",
+
+  // Arcon vowels
+  a: "ah",
   e: "eh",
+  i: "ee",
+  o: "oh",
+  u: "oo",
+
+  b: "b",
+  d: "d",
   f: "f",
   g: "g",
   h: "h",
-  i: "i",
-  j: "zh",
   k: "k",
-  q: "ky",
   r: "r",
   s: "s",
   t: "t",
-  u: "oo",
   v: "v",
-  z: "z",
-  ū: "y"
+  z: "z"
 };
 
-export function isSpeakable(text) {
-  return typeof text === "string" && /^[A-Za-zū]+$/.test(text.trim());
-}
+const isSpeakable = text =>
+  /^[A-Za-zū]+$/.test(text);
 
-function transliterate(text) {
-  return [...text.toLowerCase()]
-    .map(c => map[c] ?? c)
+function arconToSpeech(text) {
+  const key = text.toLowerCase();
+
+  // Word-specific pronunciation has priority.
+  if (manualOverrides[key]) {
+    return manualOverrides[key];
+  }
+
+  return [...key]
+    .map(char => map[char] ?? char)
     .join("");
 }
 
-export function speakArcon(text) {
-  if (!isSpeakable(text)) return false;
+export function speak(text) {
+  if (!("speechSynthesis" in window)) return;
+  if (!isSpeakable(text)) return;
 
-  const key = text.toLowerCase();
+  speechSynthesis.cancel();
 
   const utterance = new SpeechSynthesisUtterance(
-    manualOverrides[key] ?? transliterate(text)
+    arconToSpeech(text)
   );
+
+  // English voice because the browser TTS understands
+  // the pronunciation hints such as "ee" better.
+  utterance.lang = "en-US";
+  utterance.rate = 0.85;
+  utterance.pitch = 1;
 
   const voices = speechSynthesis.getVoices();
 
-  utterance.voice =
-    voices.find(v => /^en-US$/i.test(v.lang)) ||
-    voices.find(v => /^en-GB$/i.test(v.lang)) ||
-    voices.find(v => /^en/i.test(v.lang)) ||
-    null;
+  const voice =
+    voices.find(v => v.lang === "en-US") ||
+    voices.find(v => v.lang.startsWith("en-")) ||
+    voices.find(v => v.lang.startsWith("en"));
 
-  utterance.lang = utterance.voice?.lang || "en-US";
-  utterance.rate = 0.78;
+  if (voice) {
+    utterance.voice = voice;
+  }
 
-  speechSynthesis.cancel();
   speechSynthesis.speak(utterance);
-
-  return true;
 }
+
+// Some browsers load voices asynchronously.
+speechSynthesis.addEventListener("voiceschanged", () => {});
