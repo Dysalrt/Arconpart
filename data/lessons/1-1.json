@@ -1,87 +1,78 @@
 {
   "id": "1-1",
-  "title": "Use present tense",
+  "title": "Pronouns",
   "xp": 10,
   "lesson": [
     {
       "type": "T",
-      "title": "Infinitives",
-      "theory": "To start the lesson let's look at some basic infinitives of basic verbs",
+      "title": "Personal pronouns",
+      "theory": "Core personal pronouns are part of the Arcon lexicon: <b>vi</b> = I, <b>vū</b> = you, <b>siv</b> = we, <b>vos</b> = they.",
       "examples": [
         {
-          "word": "es",
-          "ipa": "εs",
-          "translation": "to be"
+          "word": "vi",
+          "ipa": "—",
+          "translation": "I"
         },
         {
-          "word": "jū",
-          "ipa": "jy",
-          "translation": "to have"
+          "word": "vū",
+          "ipa": "—",
+          "translation": "you"
         },
         {
-          "word": "ro",
-          "ipa": "ro",
-          "translation": "to go"
+          "word": "siv",
+          "ipa": "—",
+          "translation": "we"
         },
         {
-          "word": "ane",
-          "ipa": "ane",
-          "translation": "to do/to make"
-        }
-      ]
-    },
-    {
-      "type": "T",
-      "title": "Verbs conjugation",
-      "theory": "To create an usable verb in present tense you have to follow the algorithm \nIf verb's infinitive is in class I -> add +de to the end of the word\nIf verb's infinitive is in class II -> ad +e to the end of the word",
-      "examples": [
-        {
-          "word": "ese(from es)",
-          "ipa": "e'se",
-          "translation": "am/are/is"
-        },
-        {
-          "word": "jūde(from jū)",
-          "ipa": "'jy'de",
-          "translation": "have/has"
-        },
-        {
-          "word": "rode(from ro)",
-          "ipa": "ro'de",
-          "translation": "go/goes"
-        },
-        {
-          "word": "anede",
-          "ipa": "anε'dε",
-          "translation": "do/does"
+          "word": "vos",
+          "ipa": "—",
+          "translation": "they"
         }
       ]
     },
     {
       "type": "E",
       "Etype": "choice",
-      "prompt": "If the verb's infinitive is from class II, what suffix should we add to it?",
+      "prompt": "Which Arcon pronoun means “we”?",
+      "ipaHint": null,
       "options": [
-        "+e",
-        "+de"
+        "vi",
+        "vū",
+        "siv",
+        "vos"
       ],
-      "answer": "+e"
+      "answer": "siv"
     },
     {
       "type": "E",
-      "Etype": "write",
-      "prompt": "Translate the sentence\nI am good",
-      "answers": [
-        "Vi ese ven",
-        "Vi'se ven"
+      "Etype": "match",
+      "pairs": [
+        [
+          "vi",
+          "I"
+        ],
+        [
+          "vū",
+          "you"
+        ],
+        [
+          "siv",
+          "we"
+        ],
+        [
+          "vos",
+          "they"
+        ]
       ]
     },
     {
       "type": "E",
       "Etype": "write",
-      "prompt": "Translate the sentence\nYou have",
+      "prompt": "Write the Arcon word for “they”.",
+      "speak": "vos",
+      "ipaHint": null,
       "answers": [
-        "Vū jūde"
+        "vos"
       ]
     }
   ]

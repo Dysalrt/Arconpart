@@ -1,0 +1,59 @@
+{
+  "id": "2-2",
+  "title": "Questions & Negation",
+  "xp": 10,
+  "lesson": [
+    {
+      "type": "T",
+      "title": "Ask a question",
+      "theory": "Questions use VSO order. Useful interrogatives include <b>qer</b> (where), <b>qa</b> (who), and <b>qanq</b> (when).",
+      "examples": [
+        {
+          "word": "Qer ese vū?",
+          "ipa": "—",
+          "translation": "Where are you?"
+        },
+        {
+          "word": "Qa rode no vour?",
+          "ipa": "—",
+          "translation": "Who is going to the house?"
+        }
+      ]
+    },
+    {
+      "type": "E",
+      "Etype": "choice",
+      "prompt": "What does <b>qer</b> mean?",
+      "ipaHint": null,
+      "options": [
+        "where",
+        "why",
+        "who",
+        "how"
+      ],
+      "answer": "where"
+    },
+    {
+      "type": "T",
+      "title": "Negation",
+      "theory": "The negative particle is <b>nai</b>. It appears before the verb in a simple negative statement.",
+      "examples": [
+        {
+          "word": "Ul nai rode no vour.",
+          "ipa": "—",
+          "translation": "The woman is not going to the house."
+        }
+      ]
+    },
+    {
+      "type": "E",
+      "Etype": "write",
+      "prompt": "Write the Arcon negative particle.",
+      "speak": "nai",
+      "ipaHint": null,
+      "answers": [
+        "nai"
+      ]
+    }
+  ]
+}
