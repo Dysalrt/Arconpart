@@ -1,59 +1,66 @@
-// tts.js
-// Автоматическая озвучка без записанного голоса — транслитерация Arcon
-// в кириллицу и проигрывание через системный русский голос (Web Speech API).
-// Полностью независим от Telegram — работает в любом браузере.
+// js/tts.js
+// Arcon pronunciation layer.
+// Browser SpeechSynthesis cannot consume IPA directly, so playback uses
+// explicit phonetic approximations while lesson IPA remains canonical.
 
-const LETTER_MAP = {
-  a: "а", b: "б", c: "к", d: "д", e: "э", f: "ф", g: "г",
-  h: "х", i: "и", j: "ж", k: "к", l: "л", m: "м", n: "н",
-  o: "о", p: "п", q: "к", r: "р", s: "с", t: "т", u: "у",
-  v: "в", w: "в", x: "кс", y: "ю", z: "з",
+const manualOverrides = {
+  alis: "AH-liss",
+  "vūs": "vyooce",
+  vus: "vyooce"
 };
 
-// Точечные исключения для слов, которые синтезатор читает криво по общим правилам.
-// Ключ — слово Arcon в нижнем регистре.
-const OVERRIDES = {
-  // "vys": "вюс",
+const map = {
+  a: "ah", e: "eh", i: "ee", o: "oh", u: "oo",
+  ū: "you", y: "you",
+  b: "b", c: "k", d: "d", f: "f", g: "g", h: "h",
+  j: "zh", k: "k", q: "kee", r: "r", s: "s", t: "t",
+  v: "v", z: "z"
 };
-
-function transliterate(word) {
-  const lower = word.toLowerCase();
-  if (lower in OVERRIDES) return OVERRIDES[lower];
-  return lower
-    .split("")
-    .map((ch) => (ch in LETTER_MAP ? LETTER_MAP[ch] : ch))
-    .join("");
-}
-
-const supported = "speechSynthesis" in window;
-let ruVoice = null;
-
-function pickVoice() {
-  if (!supported) return;
-  const voices = speechSynthesis.getVoices();
-  const ruVoices = voices.filter((v) => v.lang && v.lang.toLowerCase().startsWith("ru"));
-  ruVoice = ruVoices.find((v) => v.name.toLowerCase().includes("google")) || ruVoices[0] || null;
-}
-
-if (supported) {
-  pickVoice();
-  speechSynthesis.onvoiceschanged = pickVoice;
-}
-
-export function speak(text, isArconWord = true) {
-  if (!supported) return;
-  const toSay = isArconWord ? transliterate(text) : text;
-  const utter = new SpeechSynthesisUtterance(toSay);
-  utter.lang = "ru-RU";
-  if (ruVoice) utter.voice = ruVoice;
-  utter.rate = 0.85;
-  speechSynthesis.cancel();
-  speechSynthesis.speak(utter);
-}
 
 export function isSpeakable(text) {
-  return /^[A-Za-z]+$/.test(text.trim());
+  return typeof text === "string" && /^[A-Za-zūy]+$/.test(text.trim());
 }
 
-export { transliterate };
-export const isSupported = supported;
+function transliterate(text) {
+  return [...text.toLowerCase()]
+    .map(char => map[char] ?? char)
+    .join(" ");
+}
+
+function speechText(text) {
+  const key = text.toLowerCase();
+  return manualOverrides[key] ?? transliterate(text);
+}
+
+function chooseVoice(voices) {
+  return (
+    voices.find(v => /^en-US$/i.test(v.lang)) ||
+    voices.find(v => /^en-GB$/i.test(v.lang)) ||
+    voices.find(v => /^en/i.test(v.lang)) ||
+    null
+  );
+}
+
+export function speakArcon(text) {
+  if (!("speechSynthesis" in window)) return false;
+  if (!isSpeakable(text)) return false;
+
+  speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(speechText(text));
+  const voice = chooseVoice(speechSynthesis.getVoices());
+
+  if (voice) {
+    utterance.voice = voice;
+    utterance.lang = voice.lang;
+  } else {
+    utterance.lang = "en-US";
+  }
+
+  utterance.rate = 0.72;
+  utterance.pitch = 1;
+  speechSynthesis.speak(utterance);
+  return true;
+}
+
+speechSynthesis.addEventListener("voiceschanged", () => {});

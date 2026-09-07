@@ -1,32 +1,122 @@
 {
-  "i": { "root": "vi", "pos": "pronoun" },
-  "you": { "root": "vy", "pos": "pronoun" },
-  "he": { "root": "Al", "pos": "pronoun" },
-  "she": { "root": "Ul", "pos": "pronoun" },
-  "it": { "root": "Di", "pos": "pronoun" },
-  "what": { "root": "Qu", "pos": "question" },
-  "who": { "root": "Qa", "pos": "question" },
-  "where": { "root": "Qer", "pos": "question" },
-  "how": { "root": "Qo", "pos": "question" },
-  "hello": { "root": "Qite", "pos": "interjection" },
-  "bye": { "root": "Qami", "pos": "interjection" },
-  "good": { "root": "ven", "pos": "adjective" },
-  "bad": { "root": "am", "pos": "adjective" },
-  "in": { "root": "en", "pos": "preposition" },
-  "tat": { "root": "no", "pos": "preposition" },
-  "to": { "root": "no", "pos": "preposition" },
-  "toward": { "root": "no", "pos": "preposition" },
-  "towards": { "root": "no", "pos": "preposition" },
-  "near": { "root": "no", "pos": "preposition" },
-  "atime": { "root": "dat", "pos": "preposition" },
-  "with": { "root": "ih", "pos": "preposition" },
-  "be": { "root": "es", "pos": "verb" },
-  "do": { "root": "ane", "pos": "verb" },
-  "want": { "root": "hyl", "pos": "verb" },
-  "go": { "root": "ro", "pos": "verb" },
-  "have": { "root": "jy", "pos": "verb" },
-  "speak": { "root": "cep", "pos": "verb" },
-  "know": { "root": "cus", "pos": "verb" },
-  "understand": { "root": "gart", "pos": "verb" },
-  "can": { "root": "gal", "pos": "verb", "modal": true }
+  "hello": {
+    "root": "Qite",
+    "pos": "interjection"
+  },
+  "hi": {
+    "root": "venite",
+    "pos": "interjection"
+  },
+  "goodbye": {
+    "root": "qami",
+    "pos": "interjection"
+  },
+  "thankyou": {
+    "root": "vinae",
+    "pos": "expression"
+  },
+  "i": {
+    "root": "vi",
+    "pos": "pronoun"
+  },
+  "you": {
+    "root": "vū",
+    "pos": "pronoun"
+  },
+  "we": {
+    "root": "siv",
+    "pos": "pronoun"
+  },
+  "they": {
+    "root": "vos",
+    "pos": "pronoun"
+  },
+  "house": {
+    "root": "vour",
+    "pos": "noun"
+  },
+  "water": {
+    "root": "ov",
+    "pos": "noun"
+  },
+  "person": {
+    "root": "ums",
+    "pos": "noun"
+  },
+  "woman": {
+    "root": "ulums",
+    "pos": "noun"
+  },
+  "man": {
+    "root": "alums",
+    "pos": "noun"
+  },
+  "go": {
+    "root": "ro",
+    "pos": "verb"
+  },
+  "be": {
+    "root": "es",
+    "pos": "verb"
+  },
+  "speak": {
+    "root": "cep",
+    "pos": "verb"
+  },
+  "eat": {
+    "root": "ate",
+    "pos": "verb"
+  },
+  "good": {
+    "root": "ven",
+    "pos": "adjective"
+  },
+  "bad": {
+    "root": "am",
+    "pos": "adjective"
+  },
+  "not": {
+    "root": "nai",
+    "pos": "particle"
+  },
+  "where": {
+    "root": "qer",
+    "pos": "question"
+  },
+  "when": {
+    "root": "qanq",
+    "pos": "question"
+  },
+  "who": {
+    "root": "qa",
+    "pos": "question"
+  },
+  "why": {
+    "root": "qi",
+    "pos": "question"
+  },
+  "how": {
+    "root": "qo",
+    "pos": "question"
+  },
+  "than": {
+    "root": "cev",
+    "pos": "particle"
+  },
+  "in": {
+    "root": "en",
+    "pos": "preposition"
+  },
+  "okay": {
+    "root": "ven",
+    "pos": "expression"
+  },
+  "wait": {
+    "root": "doh",
+    "pos": "verb"
+  },
+  "of": {
+    "root": "ir",
+    "pos": "preposition"
+  }
 }

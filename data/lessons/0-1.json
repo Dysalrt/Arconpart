@@ -1,62 +1,69 @@
 {
   "id": "0-1",
-  "title": "Буквы и звуки",
+  "title": "Greetings & Names",
+  "xp": 10,
   "lesson": [
     {
       "type": "T",
-      "title": "26 знакомых букв",
-      "theory": "В Arcon используется обычный латинский алфавит от a до z — без всякой диакритики. Большинство букв читаются почти так же, как в английском или в транскрипции IPA.",
-      "examples": []
-    },
-    {
-      "type": "T",
-      "title": "Гласные",
-      "theory": "Пять привычных гласных плюс особенная y — звучит как немецкое ü или французское u: округли губы как для «у», но держи язык как для «и».",
+      "title": "Say hello",
+      "theory": "Arcon has several greetings. <b>venite</b> is informal, while <b>qite</b> is formal.",
       "examples": [
-        { "word": "a", "ipa": "[a]", "translation": "как а" },
-        { "word": "e", "ipa": "[ɛ] (иногда [e])", "translation": "либо э либо е оба варианта верны" },
-        { "word": "i", "ipa": "[i]", "translation": "как и" },
-        { "word": "o", "ipa": "[o]", "translation": "как о" },
-        { "word": "u", "ipa": "[u]", "translation": "как у" },
-        { "word": "y", "ipa": "[y]", "translation": "как немецкое ü (über) или французское u (tu)" }
+        {
+          "word": "venite",
+          "ipa": "—",
+          "translation": "hi"
+        },
+        {
+          "word": "qite",
+          "ipa": "—",
+          "translation": "formal greeting / hello"
+        },
+        {
+          "word": "vinae",
+          "ipa": "—",
+          "translation": "thank you"
+        }
       ]
     },
     {
       "type": "E",
       "Etype": "choice",
-      "prompt": "Как читается особенная буква y?",
+      "prompt": "Which Arcon word means “hello” in a formal setting?",
       "ipaHint": null,
-      "options": ["[u]", "[y]", "[o]", "[i]"],
-      "answer": "[y]"
-    },
-    {
-      "type": "T",
-      "title": "Согласные",
-      "theory": "Согласные читаются очень предсказуемо (b, d, f, g, l, m, n, p, r, s, t, v, z — как обычно) однако есть пару согласных о которых надо кое что знать:",
-      "examples": [
-        { "word": "c", "ipa": "[k]", "translation": "всегда как «к», не «с»" },
-        { "word": "h", "ipa": "[x]", "translation": "как русское «х»" },
-        { "word": "j", "ipa": "[ʒ]", "translation": "как русское «ж»" },
-        { "word": "q", "ipa": "[kj]", "translation": "мягкое «кй»" },
-        { "word": "w", "ipa": "[v]", "translation": "звучит как v, но встречается редко — в основном в заимствованных словах" },
-        { "word": "x", "ipa": "[ks]", "translation": "как русское «кс»" }
-      ]
-    },
-    {
-      "type": "E",
-      "Etype": "choice",
-      "prompt": "Какой звук у буквы h?",
-      "ipaHint": null,
-      "options": ["[h]", "[x]", "[g]", "[k]"],
-      "answer": "[x]"
+      "options": [
+        "qite",
+        "qami",
+        "doh",
+        "los"
+      ],
+      "answer": "qite"
     },
     {
       "type": "E",
       "Etype": "match",
       "pairs": [
-        ["c", "[k]"],
-        ["j", "[ʒ]"],
-        ["x", "[ks]"]
+        [
+          "venite",
+          "hi"
+        ],
+        [
+          "qami",
+          "bye"
+        ],
+        [
+          "vinae",
+          "thank you"
+        ]
+      ]
+    },
+    {
+      "type": "E",
+      "Etype": "write",
+      "prompt": "Write the Arcon word for “thank you”.",
+      "speak": "vinae",
+      "ipaHint": null,
+      "answers": [
+        "vinae"
       ]
     }
   ]
