@@ -1,7 +1,4 @@
-// js/tts.js
-
 const manualOverrides = {
-  // Explicit pronunciation for alis: Arcon [alis]
   alis: "ah-lees"
 };
 
@@ -10,14 +7,11 @@ const map = {
   j: "y",
   q: "kee",
   c: "k",
-
-  // Arcon vowels
   a: "ah",
   e: "eh",
   i: "ee",
   o: "oh",
   u: "oo",
-
   b: "b",
   d: "d",
   f: "f",
@@ -31,13 +25,12 @@ const map = {
   z: "z"
 };
 
-const isSpeakable = text =>
+export const isSpeakable = text =>
   /^[A-Za-zū]+$/.test(text);
 
 function arconToSpeech(text) {
   const key = text.toLowerCase();
 
-  // Word-specific pronunciation has priority.
   if (manualOverrides[key]) {
     return manualOverrides[key];
   }
@@ -57,8 +50,6 @@ export function speak(text) {
     arconToSpeech(text)
   );
 
-  // English voice because the browser TTS understands
-  // the pronunciation hints such as "ee" better.
   utterance.lang = "en-US";
   utterance.rate = 0.85;
   utterance.pitch = 1;
@@ -77,5 +68,4 @@ export function speak(text) {
   speechSynthesis.speak(utterance);
 }
 
-// Some browsers load voices asynchronously.
 speechSynthesis.addEventListener("voiceschanged", () => {});
