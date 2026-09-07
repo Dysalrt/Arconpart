@@ -1,7 +1,7 @@
 // js/tts.js
 
 const manualOverrides = {
-  alis: "ah-lees"
+  alis: "uh-lees"
 };
 
 const map = {
