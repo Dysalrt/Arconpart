@@ -11,7 +11,7 @@ const map = {
   f: "f",
   g: "g",
   h: "h",
-  i: "ee",
+  i: "i",
   j: "zh",
   k: "k",
   q: "ky",
