@@ -1,3 +1,5 @@
+// js/tts.js
+
 const manualOverrides = {
   alis: "ah-lees"
 };
@@ -7,11 +9,13 @@ const map = {
   j: "y",
   q: "kee",
   c: "k",
+
   a: "ah",
   e: "eh",
   i: "ee",
   o: "oh",
   u: "oo",
+
   b: "b",
   d: "d",
   f: "f",
@@ -40,7 +44,7 @@ function arconToSpeech(text) {
     .join("");
 }
 
-export function speak(text) {
+export function speakArcon(text) {
   if (!("speechSynthesis" in window)) return;
   if (!isSpeakable(text)) return;
 
