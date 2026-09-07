@@ -2,44 +2,9 @@
   "modules": [
     {
       "id": "0",
-      "title": "Getting Started",
+      "title": "Алфавит и произношение",
       "lessons": [
-        {
-          "id": "0-1",
-          "title": "Learn how to read",
-          "subtitle": "Phonetics.",
-          "file": "0-1.json"
-        },
-        {
-          "id": "0-2",
-          "title": "Classes of words",
-          "subtitle": "two classes and simple rules",
-          "file": "0-2.json"
-        },
-        {
-          "id": "0-3",
-          "title": "Basics",
-          "subtitle": "Learn basics",
-          "file": "0-3.json"
-        }
-      ]
-    },
-    {
-      "id": "1",
-      "title": "Understand words changing",
-      "lessons": [
-        {
-          "id": "1-1",
-          "title": "Use present tense",
-          "subtitle": "Learn how to speak in present",
-          "file": "1-1.json"
-        },
-        {
-          "id": "1-2",
-          "title": "Possessions",
-          "subtitle": "Learn how to express possessions",
-          "file": "1-2.json"
-        }
+        { "id": "0-1", "title": "Буквы и звуки", "subtitle": "27 букв, 1 особенная", "file": "0-1.json" }
       ]
     }
   ]

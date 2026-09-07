@@ -1,1 +1,27 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Arcon — Learn</title><link rel="stylesheet" href="./css/style.css"></head><body><header class="topbar"><nav class="nav"><a class="logo" href="./index.html">Arcon</a><span class="nav-link">Learn</span></nav></header><main class="container"><section class="hero"><div class="eyebrow">Arcon course</div><h1>Learn Arcon, one lesson at a time.</h1><p class="muted">A focused course for English-speaking learners. No streaks, no XP — just progress.</p><div class="progress-card"><div class="progress-row"><span>Course progress</span><span id="progressText">0% complete</span></div><div class="progress-track"><div id="progressFill" class="progress-fill"></div></div></div></section><div id="modules"></div></main><script type="module" src="./js/index.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Arcon — Учи язык с нуля</title>
+<link rel="stylesheet" href="css/style.css?v=1">
+</head>
+<body>
+
+  <div class="screen">
+    <header class="home-header">
+      <div class="logo-mark">y</div>
+      <div class="home-titles">
+        <h1>Arcon</h1>
+        <p id="streak-line">Загрузка прогресса…</p>
+      </div>
+    </header>
+    <div id="module-list" class="module-list"><!-- рендерится из JS --></div>
+    <p style="text-align:center;margin-top:16px;">
+      <a href="translate.html" style="color:var(--accent);font-size:14px;text-decoration:none;">🥚 Переводчик</a>
+    </p>
+  </div>
+
+<script type="module" src="js/home.js"></script>
+</body>
+</html>
