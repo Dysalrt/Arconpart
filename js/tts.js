@@ -4,8 +4,7 @@
 // explicit phonetic approximations while lesson IPA remains canonical.
 
 const manualOverrides = {
-  alis: "AH-liss",
-  "vys": "vooce"
+  alis: "AH-liss"
 };
 
 const map = {
