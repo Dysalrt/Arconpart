@@ -1,0 +1,73 @@
+{
+  "id": "1-2",
+  "title": "Possessions and more words",
+  "xp": 10,
+  "lesson": [
+    {
+      "type": "T",
+      "title": "He & She",
+      "theory": "Two more pronouns to add to what you already know:",
+      "examples": [
+        { "word": "Al", "ipa": "", "translation": "he" },
+        { "word": "Ul", "ipa": "", "translation": "she" }
+      ]
+    },
+    {
+      "type": "T",
+      "title": "Showing possession",
+      "theory": "Remember Type 1 / Type 2? It comes back here too. To say \"my\", \"your\", \"his\"... take the pronoun and add: Type 1 (ends in a vowel) → +s. Type 2 (ends in a consonant) → +is.",
+      "examples": [
+        { "word": "vi → vis", "ipa": "", "translation": "I → my (Type 1: vowel)" },
+        { "word": "vy → vys", "ipa": "", "translation": "you → your (Type 1: vowel)" },
+        { "word": "Al → Alis", "ipa": "", "translation": "he → his (Type 2: consonant)" },
+        { "word": "Ul → Ulis", "ipa": "", "translation": "she → her (Type 2: consonant)" }
+      ]
+    },
+    {
+      "type": "E",
+      "Etype": "choice",
+      "prompt": "\"Al\" ends in a consonant, so \"his\" is...",
+      "ipaHint": null,
+      "options": ["Alis", "Als", "Ali"],
+      "answer": "Alis"
+    },
+    {
+      "type": "E",
+      "Etype": "choice",
+      "prompt": "\"vy\" ends in a vowel, so \"your\" is...",
+      "ipaHint": null,
+      "options": ["vys", "vyi", "vyis"],
+      "answer": "vys"
+    },
+    {
+      "type": "E",
+      "Etype": "match",
+      "pairs": [
+        ["vis", "my"],
+        ["vys", "your"],
+        ["Alis", "his"],
+        ["Ulis", "her"]
+      ]
+    },
+    {
+      "type": "E",
+      "Etype": "write",
+      "prompt": "Translate the sentence\nHe is good",
+      "speak": "Al ese ven",
+      "answers": ["Al ese ven"]
+    },
+    {
+      "type": "E",
+      "Etype": "write",
+      "prompt": "Translate the sentence\nShe has",
+      "speak": "Ul jyde",
+      "answers": ["Ul jyde"]
+    },
+    {
+      "type": "E",
+      "Etype": "write",
+      "prompt": "What's the possessive form of \"Al\" (his)?",
+      "answers": ["Alis"]
+    }
+  ]
+}
