@@ -20,11 +20,19 @@
     "pos": "pronoun"
   },
   "you": {
-    "root": "vū",
+    "root": "vy",
     "pos": "pronoun"
   },
   "we": {
     "root": "siv",
+    "pos": "pronoun"
+  },
+  "he": {
+    "root": "Al",
+    "pos": "pronoun"
+  },
+  "she": {
+    "root": "Ul",
     "pos": "pronoun"
   },
   "they": {

@@ -4,7 +4,7 @@ export function resolvePlaceholders(value, lex) {
   return value
     .replace(/%([A-Za-z][A-Za-z0-9_-]*?)%{([^,{}]*),([^{}]*)}/g, (_,k,a,b) => {
       const root=lookup(k); if(root===`%${k}%`) return root;
-      return root + ("aeiouū".includes([...root].at(-1)?.toLowerCase()) ? a : b);
+      return root + ("aeiouy".includes([...root].at(-1)?.toLowerCase()) ? a : b);
     })
     .replace(/~([A-Za-z][A-Za-z0-9_-]*)~/g, (_,k) => {
       const root=lookup(k); return root===`%${k}%`?root:root[0].toUpperCase()+root.slice(1);

@@ -5,20 +5,19 @@
 
 const manualOverrides = {
   alis: "AH-liss",
-  "vūs": "vyooce",
-  vus: "vyooce"
+  "vys": "vyooce"
 };
 
 const map = {
   a: "ah", e: "eh", i: "ee", o: "oh", u: "oo",
-  ū: "you", y: "you",
+  y: "you",
   b: "b", c: "k", d: "d", f: "f", g: "g", h: "h",
   j: "zh", k: "k", q: "kee", r: "r", s: "s", t: "t",
   v: "v", z: "z"
 };
 
 export function isSpeakable(text) {
-  return typeof text === "string" && /^[A-Za-zūy]+$/.test(text.trim());
+  return typeof text === "string" && /^[A-Za-z]+$/.test(text.trim());
 }
 
 function transliterate(text) {
