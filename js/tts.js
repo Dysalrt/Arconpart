@@ -99,7 +99,11 @@ function addVowel(ctx, destination, phoneme, start, duration, pitch) {
     filter.Q.setValueAtTime(q, start);
     const formantGain = ctx.createGain();
     formantGain.gain.setValueAtTime(gain, start);
-    fundamental.disconnect(output);
+    try {
+      fundamental.disconnect(output);
+      } catch (_) {
+  // Already disconnected — ignore.
+}
     fundamental.connect(filter);
     filter.connect(formantGain);
     formantGain.connect(output);
