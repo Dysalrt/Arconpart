@@ -5,7 +5,7 @@
 
 const manualOverrides = {
   alis: "AH-liss",
-  "vys": "viuce"
+  "vys": "vooce"
 };
 
 const map = {
