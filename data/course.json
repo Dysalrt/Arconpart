@@ -6,32 +6,32 @@
       "lessons": [
         {
           "id": "0-1",
-          "title": "Greetings & Names",
-          "subtitle": "Say hello, goodbye, and use basic expressions.",
+          "title": "Letters and Sounds",
+          "subtitle": "Phonetics and Alphabet.",
           "file": "0-1.json"
         },
         {
           "id": "0-2",
-          "title": "The Core Sentence",
-          "subtitle": "Build simple Arcon SVO sentences.",
+          "title": "Word types",
+          "subtitle": "The core of the language.",
           "file": "0-2.json"
         }
       ]
     },
     {
       "id": "1",
-      "title": "People & Things",
+      "title": "Build simple sentences",
       "lessons": [
         {
           "id": "1-1",
-          "title": "Pronouns",
-          "subtitle": "Learn the core personal pronouns.",
+          "title": "Use present tense",
+          "subtitle": "Learn the present tense.",
           "file": "1-1.json"
         },
         {
           "id": "1-2",
-          "title": "Plural & Possession",
-          "subtitle": "Use Arcon's two word classes.",
+          "title": "Possesions and more words",
+          "subtitle": "Express possesions.",
           "file": "1-2.json"
         }
       ]
