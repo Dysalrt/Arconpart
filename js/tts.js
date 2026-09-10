@@ -2,6 +2,16 @@
 // Does NOT use an English (or any other language) pronunciation model.
 // The spelling is converted directly to Arcon phonemes and synthesized
 // with Web Audio. `y` is the Arcon /y/ vowel (IPA close front rounded vowel).
+//
+// v2 — softened synthesis. The original version sounded harsh/uncanny
+// because of three things at once: a perfectly flat pitch (0 variation),
+// very narrow resonant formant filters (high Q → metallic "ringing"),
+// and phonemes switching on/off abruptly with no overlap between them.
+// Real speech has pitch that drifts and wobbles slightly, wider/softer
+// resonances, and sounds that blend into each other. Fixing those three
+// things (without touching the overall architecture) removes most of
+// the "horror movie" quality while keeping this fully self-contained —
+// no voice model, no network call, same phoneme table as before.
 
 const PHONEMES = {
   a: { type: 'vowel', f1: 800, f2: 1150, f3: 2850 },
@@ -29,10 +39,12 @@ const PHONEMES = {
 };
 
 const SAMPLE_RATE = 48000;
-const PHONEME_MS = 115;
-const VOWEL_MS = 145;
+const VOWEL_MS = 150;
 const STOP_MS = 75;
 const FRICATIVE_MS = 105;
+
+// Сколько соседние звуки "наезжают" друг на друга — убирает щелчки на стыках.
+const OVERLAP_MS = 30;
 
 let audioContext = null;
 let activeSources = [];
@@ -58,7 +70,7 @@ function stopPlayback() {
   activeSources = [];
 }
 
-function envelope(gain, start, duration, attack = 0.012, release = 0.025) {
+function envelope(gain, start, duration, attack = 0.018, release = 0.035) {
   const end = start + duration;
   gain.gain.setValueAtTime(0.0001, start);
   gain.gain.exponentialRampToValueAtTime(0.22, start + attack);
@@ -74,6 +86,18 @@ function makeNoise(ctx, duration) {
   return buffer;
 }
 
+// Небольшое естественное "плавание" высоты тона внутри звука — вместо
+// идеально ровной частоты. Реальный голос никогда не держит тон абсолютно
+// неподвижным, и именно эта неподвижность звучит механически / жутковато.
+function applyPitchWobble(osc, start, duration, basePitch) {
+  const steps = 5;
+  for (let i = 0; i <= steps; i++) {
+    const t = start + (duration * i) / steps;
+    const jitter = 1 + (Math.random() - 0.5) * 0.025; // ±2.5%
+    osc.frequency.linearRampToValueAtTime(basePitch * jitter, t);
+  }
+}
+
 function addVowel(ctx, destination, phoneme, start, duration, pitch) {
   const output = ctx.createGain();
   envelope(output, start, duration);
@@ -82,16 +106,25 @@ function addVowel(ctx, destination, phoneme, start, duration, pitch) {
   const fundamental = ctx.createOscillator();
   fundamental.type = 'sawtooth';
   fundamental.frequency.setValueAtTime(pitch, start);
-  fundamental.connect(output);
+  applyPitchWobble(fundamental, start, duration, pitch);
   fundamental.start(start);
   fundamental.stop(start + duration);
   activeSources.push(fundamental);
 
-  // Three formant filters create a vowel from the raw source.
+  // Мягкий низкочастотный срез самого источника — убирает часть резких
+  // высоких гармоник пилообразной волны до того, как они попадут в форманты.
+  const preShape = ctx.createBiquadFilter();
+  preShape.type = 'lowpass';
+  preShape.frequency.setValueAtTime(3200, start);
+  preShape.Q.setValueAtTime(0.5, start);
+  fundamental.connect(preShape);
+
+  // Три формантных фильтра — ниже Q, чем раньше (было 8/10/12) —
+  // шире полоса пропускания, меньше "звона".
   for (const [frequency, q, gain] of [
-    [phoneme.f1, 8, 1.0],
-    [phoneme.f2, 10, 0.65],
-    [phoneme.f3, 12, 0.35]
+    [phoneme.f1, 4, 1.0],
+    [phoneme.f2, 5, 0.6],
+    [phoneme.f3, 6, 0.3]
   ]) {
     const filter = ctx.createBiquadFilter();
     filter.type = 'bandpass';
@@ -99,12 +132,7 @@ function addVowel(ctx, destination, phoneme, start, duration, pitch) {
     filter.Q.setValueAtTime(q, start);
     const formantGain = ctx.createGain();
     formantGain.gain.setValueAtTime(gain, start);
-    try {
-      fundamental.disconnect(output);
-      } catch (_) {
-  // Already disconnected — ignore.
-}
-    fundamental.connect(filter);
+    preShape.connect(filter);
     filter.connect(formantGain);
     formantGain.connect(output);
   }
@@ -138,10 +166,10 @@ function addNoiseConsonant(ctx, destination, phoneme, start, duration, pitch) {
   if (phoneme.place === 'postalveolar') cutoff = 2600;
   if (phoneme.place === 'glottal') cutoff = 1800;
   filter.frequency.setValueAtTime(cutoff, start);
-  filter.Q.setValueAtTime(phoneme.place === 'postalveolar' ? 2 : 0.8, start);
+  filter.Q.setValueAtTime(phoneme.place === 'postalveolar' ? 1.2 : 0.7, start);
 
   const gain = ctx.createGain();
-  envelope(gain, start, duration, 0.006, 0.018);
+  envelope(gain, start, duration, 0.008, 0.022);
   gain.gain.setValueAtTime(0.11, start + 0.01);
   source.connect(filter).connect(gain).connect(destination);
   source.start(start);
@@ -153,7 +181,8 @@ function addNoiseConsonant(ctx, destination, phoneme, start, duration, pitch) {
     const voiceGain = ctx.createGain();
     osc.type = 'sawtooth';
     osc.frequency.setValueAtTime(pitch, start);
-    envelope(voiceGain, start, duration, 0.008, 0.018);
+    applyPitchWobble(osc, start, duration, pitch);
+    envelope(voiceGain, start, duration, 0.01, 0.022);
     voiceGain.gain.setValueAtTime(0.055, start);
     osc.connect(voiceGain).connect(destination);
     osc.start(start);
@@ -181,7 +210,7 @@ function addStop(ctx, destination, phoneme, start, duration, pitch) {
     const voiceGain = ctx.createGain();
     osc.type = 'sawtooth';
     osc.frequency.setValueAtTime(pitch, start);
-    envelope(voiceGain, start, duration, 0.004, 0.018);
+    envelope(voiceGain, start, duration, 0.006, 0.022);
     voiceGain.gain.setValueAtTime(0.045, start);
     osc.connect(voiceGain).connect(destination);
     osc.start(start);
@@ -200,18 +229,31 @@ function tokenize(text) {
   return text.toLowerCase().trim().split(/\s+/).map(word => [...word]);
 }
 
-function scheduleWord(ctx, destination, word, start, pitch) {
+// Высота тона плавно снижается к концу слова — как в естественной речи
+// (declination), а не держится на одном значении всё время.
+function pitchForPosition(basePitch, index, total) {
+  if (total <= 1) return basePitch;
+  const drop = 18; // Гц, на сколько тон опускается к концу слова
+  return basePitch - (drop * index) / (total - 1);
+}
+
+function scheduleWord(ctx, destination, word, start, basePitch) {
   let t = start;
-  for (const letter of word) {
+  const overlap = OVERLAP_MS / 1000;
+  for (let i = 0; i < word.length; i++) {
+    const letter = word[i];
     const p = PHONEMES[letter];
     if (!p) continue;
     const duration = phonemeDuration(p);
+    const pitch = pitchForPosition(basePitch, i, word.length);
     if (p.type === 'vowel') addVowel(ctx, destination, p, t, duration, pitch);
     else if (p.type === 'stop') addStop(ctx, destination, p, t, duration, pitch);
     else addNoiseConsonant(ctx, destination, p, t, duration, pitch);
-    t += duration;
+    // Следующий звук стартует чуть раньше конца текущего — звуки
+    // наплывают друг на друга вместо резкой нарезки "вкл-выкл".
+    t += Math.max(duration - overlap, duration * 0.4);
   }
-  return t;
+  return t + overlap;
 }
 
 export function speakArcon(text) {
@@ -224,13 +266,22 @@ export function speakArcon(text) {
 
   const master = ctx.createGain();
   master.gain.setValueAtTime(0.8, ctx.currentTime);
-  master.connect(ctx.destination);
+  // Общий мягкий срез верхов на выходе — убирает остаточную резкость/шипение.
+  const warmth = ctx.createBiquadFilter();
+  warmth.type = 'lowpass';
+  warmth.frequency.setValueAtTime(4500, ctx.currentTime);
+  warmth.Q.setValueAtTime(0.4, ctx.currentTime);
+  master.connect(warmth);
+  warmth.connect(ctx.destination);
 
   let t = ctx.currentTime + 0.025;
   const words = tokenize(text);
   for (const word of words) {
-    t = scheduleWord(ctx, master, word, t, 125);
-    t += 0.075;
+    // Небольшой случайный разброс базовой высоты тона между словами —
+    // тоже часть "не звучать как робот".
+    const basePitch = 125 + (Math.random() - 0.5) * 8;
+    t = scheduleWord(ctx, master, word, t, basePitch);
+    t += 0.09;
   }
 
   return true;
