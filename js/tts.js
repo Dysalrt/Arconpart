@@ -43,9 +43,6 @@ const VOWEL_MS = 150;
 const STOP_MS = 75;
 const FRICATIVE_MS = 105;
 
-// Сколько соседние звуки "наезжают" друг на друга — убирает щелчки на стыках.
-const OVERLAP_MS = 30;
-
 let audioContext = null;
 let activeSources = [];
 
@@ -86,6 +83,28 @@ function makeNoise(ctx, duration) {
   return buffer;
 }
 
+let voiceWave = null;
+function getVoiceWave(ctx) {
+  if (voiceWave) return voiceWave;
+  // Кастомный спектр вместо резкой пилы: гармоники спадают быстрее
+  // (примерно как 1/n^1.6 вместо 1/n у пилы) — звучит теплее и менее
+  // "гудяще", ближе к настоящему голосовому источнику.
+  const harmonics = 16;
+  const real = new Float32Array(harmonics + 1);
+  const imag = new Float32Array(harmonics + 1);
+  for (let n = 1; n <= harmonics; n++) {
+    imag[n] = 1 / Math.pow(n, 1.6);
+  }
+  voiceWave = ctx.createPeriodicWave(real, imag, { disableNormalization: false });
+  return voiceWave;
+}
+
+function makeVoiceOsc(ctx) {
+  const osc = ctx.createOscillator();
+  osc.setPeriodicWave(getVoiceWave(ctx));
+  return osc;
+}
+
 // Небольшое естественное "плавание" высоты тона внутри звука — вместо
 // идеально ровной частоты. Реальный голос никогда не держит тон абсолютно
 // неподвижным, и именно эта неподвижность звучит механически / жутковато.
@@ -103,8 +122,7 @@ function addVowel(ctx, destination, phoneme, start, duration, pitch) {
   envelope(output, start, duration);
   output.connect(destination);
 
-  const fundamental = ctx.createOscillator();
-  fundamental.type = 'sawtooth';
+  const fundamental = makeVoiceOsc(ctx);
   fundamental.frequency.setValueAtTime(pitch, start);
   applyPitchWobble(fundamental, start, duration, pitch);
   fundamental.start(start);
@@ -177,9 +195,8 @@ function addNoiseConsonant(ctx, destination, phoneme, start, duration, pitch) {
   activeSources.push(source);
 
   if (phoneme.voiced) {
-    const osc = ctx.createOscillator();
+    const osc = makeVoiceOsc(ctx);
     const voiceGain = ctx.createGain();
-    osc.type = 'sawtooth';
     osc.frequency.setValueAtTime(pitch, start);
     applyPitchWobble(osc, start, duration, pitch);
     envelope(voiceGain, start, duration, 0.01, 0.022);
@@ -197,18 +214,25 @@ function addStop(ctx, destination, phoneme, start, duration, pitch) {
   const filter = ctx.createBiquadFilter();
   filter.type = 'highpass';
   filter.frequency.setValueAtTime(phoneme.palatal ? 1800 : 900, start);
+  // Мягкий верхний срез шума — без этого белый шум звучит как радиопомехи,
+  // человеческое ухо очень чувствительно к энергии выше ~8 кГц.
+  const noiseTame = ctx.createBiquadFilter();
+  noiseTame.type = 'lowpass';
+  noiseTame.frequency.setValueAtTime(7500, start);
   const gain = ctx.createGain();
-  gain.gain.setValueAtTime(0.16, start);
+  // Короткий подъём в начале вместо мгновенного скачка громкости —
+  // резкий старт с нуля создавал слышимый "щелчок".
+  gain.gain.setValueAtTime(0.0001, start);
+  gain.gain.exponentialRampToValueAtTime(0.16, start + 0.006);
   gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
-  burst.connect(filter).connect(gain).connect(destination);
+  burst.connect(filter).connect(noiseTame).connect(gain).connect(destination);
   burst.start(start);
   burst.stop(start + duration);
   activeSources.push(burst);
 
   if (phoneme.voiced) {
-    const osc = ctx.createOscillator();
+    const osc = makeVoiceOsc(ctx);
     const voiceGain = ctx.createGain();
-    osc.type = 'sawtooth';
     osc.frequency.setValueAtTime(pitch, start);
     envelope(voiceGain, start, duration, 0.006, 0.022);
     voiceGain.gain.setValueAtTime(0.045, start);
@@ -239,7 +263,6 @@ function pitchForPosition(basePitch, index, total) {
 
 function scheduleWord(ctx, destination, word, start, basePitch) {
   let t = start;
-  const overlap = OVERLAP_MS / 1000;
   for (let i = 0; i < word.length; i++) {
     const letter = word[i];
     const p = PHONEMES[letter];
@@ -249,11 +272,11 @@ function scheduleWord(ctx, destination, word, start, basePitch) {
     if (p.type === 'vowel') addVowel(ctx, destination, p, t, duration, pitch);
     else if (p.type === 'stop') addStop(ctx, destination, p, t, duration, pitch);
     else addNoiseConsonant(ctx, destination, p, t, duration, pitch);
-    // Следующий звук стартует чуть раньше конца текущего — звуки
-    // наплывают друг на друга вместо резкой нарезки "вкл-выкл".
-    t += Math.max(duration - overlap, duration * 0.4);
+    // Последовательно, без наплыва — плавность даём другим способом
+    // (питч + форма волны), а не сокращением времени звучания.
+    t += duration;
   }
-  return t + overlap;
+  return t;
 }
 
 export function speakArcon(text) {
@@ -266,12 +289,24 @@ export function speakArcon(text) {
 
   const master = ctx.createGain();
   master.gain.setValueAtTime(0.8, ctx.currentTime);
+
+  // Лимитер на выходе — страхует от щелчков/треска, если несколько звуков
+  // случайно наложатся по громкости (например, гласная + окрашивающий тон /y/).
+  const limiter = ctx.createDynamicsCompressor();
+  limiter.threshold.setValueAtTime(-12, ctx.currentTime);
+  limiter.knee.setValueAtTime(6, ctx.currentTime);
+  limiter.ratio.setValueAtTime(12, ctx.currentTime);
+  limiter.attack.setValueAtTime(0.003, ctx.currentTime);
+  limiter.release.setValueAtTime(0.05, ctx.currentTime);
+
   // Общий мягкий срез верхов на выходе — убирает остаточную резкость/шипение.
   const warmth = ctx.createBiquadFilter();
   warmth.type = 'lowpass';
   warmth.frequency.setValueAtTime(4500, ctx.currentTime);
   warmth.Q.setValueAtTime(0.4, ctx.currentTime);
-  master.connect(warmth);
+
+  master.connect(limiter);
+  limiter.connect(warmth);
   warmth.connect(ctx.destination);
 
   let t = ctx.currentTime + 0.025;
