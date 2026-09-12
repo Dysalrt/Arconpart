@@ -1,81 +1,165 @@
-// tts.js — real browser voice (Web Speech API), NOT a from-scratch synthesizer.
-// Arcon spelling is transliterated into an English-orthography approximation
-// and spoken with a real en-US/en-GB SpeechSynthesisVoice. This sounds like
-// an actual human voice (unlike audio-synthesized formants), at the cost of
-// not being 100% phonetically precise — English spelling-to-sound rules are
-// context-dependent, so some words WILL come out slightly off. That's fixed
-// per-word via the `OVERRIDES` table below as they're discovered — same
-// pattern used for every language this approach has been tried with so far.
+// tts.js — Arcon IPA TTS
+// The Arcon spelling is converted directly to IPA before being sent
+// to the browser's SpeechSynthesis engine.
+//
+// IMPORTANT:
+// This does NOT use English spelling rules.
+// Arcon letters are converted to their actual phonetic values.
+//
+// Arcon:
+// a = [a]
+// e = [ɛ]
+// i = [i]
+// o = [o]
+// u = [u]
+// y = [y]
+// j = [ʒ]
+// q = [kʲ]
+// h = [x]
+// x = [ks]
+// c = [k]
 
-const LETTER_MAP = {
-  a: "ah", e: "eh", i: "ee", o: "oh", u: "oo",
-  y: "ew", // Arcon y = IPA [y] (like German ü) — "ew" is the closest common English spelling
-  b: "b", c: "k", d: "d", f: "f", g: "g",
-  h: "kh", // Arcon h = IPA [x] — English has no native equivalent; "kh" reads closer than plain "h"
-  j: "zh", // Arcon j = IPA [ʒ] — common transliteration convention
-  k: "k", l: "l", m: "m", n: "n", p: "p",
-  q: "ky", // Arcon q = IPA [kʲ]
-  r: "r", s: "s", t: "t", v: "v",
-  w: "v", // Arcon w sounds like v (rare letter, mostly loanwords)
-  x: "ks", z: "z",
+const IPA_MAP = {
+  a: "a",
+  b: "b",
+  c: "k",
+  d: "d",
+  e: "ɛ",
+  f: "f",
+  g: "g",
+  h: "x",
+  i: "i",
+  j: "ʒ",
+  k: "k",
+  l: "l",
+  m: "m",
+  n: "n",
+  o: "o",
+  p: "p",
+  q: "kʲ",
+  r: "r",
+  s: "s",
+  t: "t",
+  u: "u",
+  v: "v",
+  w: "v",
+  x: "ks",
+  y: "y",
+  z: "z",
 };
 
-// Point-fixes for specific words a voice reads wrong despite "correct" spelling
-// logic above — English TTS engines make word-level guesses (stress, whether
-// an "s" is voiced/unvoiced, etc.) that plain letter substitution can't predict.
-// Keys are the ORIGINAL Arcon spelling, lowercase.
-const OVERRIDES = {
-  // "al": "ahl",
-};
+const supported =
+  typeof window !== "undefined" &&
+  "speechSynthesis" in window &&
+  "SpeechSynthesisUtterance" in window;
 
-function transliterate(word) {
-  const lower = word.toLowerCase();
-  if (lower in OVERRIDES) return OVERRIDES[lower];
-  return lower
-    .split("")
-    .map((ch) => (ch in LETTER_MAP ? LETTER_MAP[ch] : ch))
-    .join(" "); // пробелы между "слогами" помогают некоторым голосам не сливать буквы
-}
-
-const supported = typeof window !== "undefined" && "speechSynthesis" in window;
 let cachedVoice = null;
 
 function pickVoice() {
   if (!supported) return;
+
   const voices = speechSynthesis.getVoices();
-  const enVoices = voices.filter((v) => v.lang && v.lang.toLowerCase().startsWith("en"));
-  // Предпочитаем голоса Google/естественно звучащие, если есть — иначе любой английский.
+
+  if (!voices.length) return;
+
+  // Prefer voices that are likely to handle IPA/foreign phonetics
+  // reasonably well.
   cachedVoice =
-    enVoices.find((v) => v.name.toLowerCase().includes("google")) ||
-    enVoices.find((v) => v.lang.toLowerCase() === "en-us") ||
-    enVoices[0] ||
+    voices.find(v => v.lang?.toLowerCase() === "en-us") ||
+    voices.find(v => v.lang?.toLowerCase().startsWith("en")) ||
+    voices[0] ||
     null;
 }
 
 if (supported) {
   pickVoice();
-  speechSynthesis.onvoiceschanged = pickVoice;
+
+  speechSynthesis.onvoiceschanged = () => {
+    pickVoice();
+  };
 }
 
+
+/**
+ * Check whether the text can be pronounced as Arcon.
+ */
 export function isSpeakable(text) {
-  return typeof text === "string" && /^[A-Za-z]+(?:\s+[A-Za-z]+)*$/.test(text.trim());
+  return (
+    typeof text === "string" &&
+    /^[A-Za-z]+(?:\s+[A-Za-z]+)*$/.test(text.trim())
+  );
 }
 
+
+/**
+ * Convert Arcon spelling directly into IPA.
+ *
+ * Example:
+ *   es   -> ɛs
+ *   ro   -> ro
+ *   jy   -> ʒy
+ *   ane  -> anɛ
+ *   vys  -> vys
+ *   x    -> ks
+ *   q    -> kʲ
+ *   h    -> x
+ *   j    -> ʒ
+ *   c    -> k
+ */
+function arconToIPA(text) {
+  return text
+    .toLowerCase()
+    .split(/\s+/)
+    .map(word => {
+      let result = "";
+
+      for (const char of word) {
+        result += IPA_MAP[char] ?? char;
+      }
+
+      return result;
+    })
+    .join(" ");
+}
+
+
+/**
+ * Speak Arcon using IPA rather than English spelling.
+ */
 export function speakArcon(text) {
-  if (!supported || !isSpeakable(text)) return false;
+  if (!supported || !isSpeakable(text)) {
+    return false;
+  }
 
-  const words = text.trim().split(/\s+/).map(transliterate);
-  const utter = new SpeechSynthesisUtterance(words.join(", ")); // короткая пауза между словами фразы
+  const ipa = arconToIPA(text.trim());
+
+  speechSynthesis.cancel();
+
+  const utter = new SpeechSynthesisUtterance(ipa);
+
+  if (cachedVoice) {
+    utter.voice = cachedVoice;
+  }
+
+  // Keep it slightly slower than normal English TTS.
+  // This gives unusual Arcon phonemes a little more room.
+  utter.rate = 0.82;
+  utter.pitch = 1.0;
+
+  // We deliberately do NOT set an English spelling approximation here.
   utter.lang = "en-US";
-  if (cachedVoice) utter.voice = cachedVoice;
-  utter.rate = 0.85;
-  utter.pitch = 1;
 
-  speechSynthesis.cancel(); // прерываем предыдущую фразу, если ещё играет
   speechSynthesis.speak(utter);
+
   return true;
 }
 
+
+/**
+ * Stop current Arcon pronunciation.
+ */
 export function stopArcon() {
-  if (supported) speechSynthesis.cancel();
+  if (supported) {
+    speechSynthesis.cancel();
+  }
 }
