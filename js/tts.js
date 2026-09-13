@@ -1,26 +1,24 @@
-// tts.js — Arcon phonetic browser TTS (English Base Engine v6 - STABLE & SOFT)
+// tts.js — Arcon phonetic browser TTS (English Base Engine v7 - MALE & STABLE)
 //
 // API remains the same: isSpeakable(text), speakArcon(text), stopArcon()
 //
-// v6: Switched back to English engine to ensure 100% device compatibility.
-// Fully automated phonetic translation into English syllables.
-// Hard-coded rules force English voices to say soft [ʒ], clean [y/ü] and clear [u].
+// v7: Restored MALE voice preference. Kept the stable English engine
+// base for 100% cross-device compatibility. Fully automated phonetics.
 
 const LETTER_MAP = {
   a: "ah",   // Чистый открытый [а]
   b: "b",
   c: "k",
   d: "d",
-  e: "eh",   // Чистый официальный [э] (как в слове "eh")
+  e: "eh",   // Чистый официальный [э]
   f: "f",
   g: "g",
   h: "kh",   // Глубокий хриплый [х]
   i: "ee",   // Чистый [и]
-
-  // СТАБИЛЬНЫЙ Ж: "zh" заставляет английский TTS выдать чистый, 
-  // мягкий, жужжащий звук [ʒ] (как в слове vision / measure)
+  
+  // Наш проверенный жужжащий [ж] (как в слове vision)
   j: "zh",   
-
+  
   k: "k",
   l: "l",
   m: "m",
@@ -31,23 +29,18 @@ const LETTER_MAP = {
   r: "r",
   s: "s",
   t: "t",
-  
-  // СТАБИЛЬНЫЙ У: "oo" дает мягкий глубокий звук [у]
-  u: "oo",   
-  
+  u: "oo",   // Мягкий глубокий [у]
   v: "v",
   w: "v",
   x: "ks",
-  
-  // СТАБИЛЬНЫЙ УЬ/Ю: "ew" или "u" в американском английском дает нужный срез [y]
-  y: "ew",   
+  y: "ew",   // Твой [уь/ю]
   z: "z",
 };
 
-// WORD_MAP теперь пустой — автоматика сама склеит фонемы как нужно!
+// Автоматика сама соберет все нужные слова
 const WORD_MAP = {
-  // Изолированные буквы (Урок 1) — добавляем нейтральный гласный хвост "uh" ([э]),
-  // чтобы движок не читал одиночные буквы по алфавиту (как "джей", "эйч").
+  // Изолированные буквы (Урок 1) — добавляем "uh" ([э]),
+  // чтобы мужской голос не читал одиночные буквы по алфавиту.
   j: "zhuh",   // Четкий короткий [ж]
   h: "khuh",   // Четкий короткий [х]
   e: "eh",     // Чистый [э]
@@ -56,7 +49,7 @@ const WORD_MAP = {
   y: "ew",      
   u: "ooh",    
 
-  // Исключение для слова "vi", чтобы оно не растягивалось:
+  // Исключение для слова "vi", чтобы мужской голос не тянул его:
   vi: "v",
 };
 
@@ -67,7 +60,7 @@ const supported =
 
 let cachedVoice = null;
 
-// Ищем качественный женский английский голос (Google, Microsoft, Apple)
+// Фильтруем голоса и принудительно ищем качественный МУЖСКОЙ английский голос
 function pickVoice() {
   if (!supported) return;
   const voices = speechSynthesis.getVoices();
@@ -78,17 +71,18 @@ function pickVoice() {
   );
 
   if (englishVoices.length > 0) {
-    // Ищем женские голоса (Zira, Google US English, Samantha, Hazel, etc.)
-    const femaleVoice = englishVoices.find((voice) => {
+    // Ищем маркеры мужских голосов (David, Mark, George, Google Male, George, etc.)
+    const maleVoice = englishVoices.find((voice) => {
       const name = voice.name.toLowerCase();
-      return name.includes("zira") || 
-             name.includes("google us english") || 
-             name.includes("samantha") || 
-             name.includes("hazel") ||
-             name.includes("female") ||
-             name.includes("natural");
+      return name.includes("david") || 
+             name.includes("mark") || 
+             name.includes("george") || 
+             name.includes("male") ||
+             name.includes("premium male") ||
+             name.includes("guy");
     });
-    cachedVoice = femaleVoice || englishVoices[0];
+    // Если мужской нашли — ставим его, если нет — берем первый доступный английский
+    cachedVoice = maleVoice || englishVoices[0];
   } else {
     cachedVoice = voices[0] || null;
   }
@@ -139,8 +133,8 @@ export function speakArcon(text) {
 
   if (cachedVoice) utterance.voice = cachedVoice;
 
-  utterance.rate = 0.82; // Мягкий, размеренный темп для четкости гласных
-  utterance.pitch = 1.0;
+  utterance.rate = 0.83; // Размеренный, строгий темп для мужского голоса
+  utterance.pitch = 0.95; // Чуть-чуть занижаем тон для большей солидности и брутальности
   utterance.volume = 1.0;
 
   speechSynthesis.speak(utterance);
