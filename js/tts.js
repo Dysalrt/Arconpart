@@ -1,4 +1,4 @@
-// tts.js — Arcon phonetic browser TTS
+// tts.js — Arcon phonetic browser TTS (German-based Engine v3)
 //
 // Keeps the same API used by lesson.js:
 //   isSpeakable(text)
@@ -7,39 +7,33 @@
 //
 // IMPORTANT:
 // Browser SpeechSynthesis does not have a standard way to receive IPA.
-// Therefore this file uses carefully chosen phonetic spellings instead
-// of letting the English voice read Arcon spelling directly.
+// Therefore this file uses carefully chosen German phonetic spellings instead
+// of letting the German voice read Arcon spelling directly.
 //
-// v2 note: standalone letters/short clusters with no vowel (zh, kh, ky, ks)
-// or a bare lone vowel ("oo") get read as spelled-out letter names or as
-// an interjection with its own pitch contour — NOT as the intended sound.
-// This happens because the browser's text normalizer doesn't recognize
-// them as real English words. Fix: pad these specific standalone cases
-// with a neutral trailing vowel sound ("uh") so they read as ordinary
-// short words instead of triggering that fallback. This only matters for
-// the handful of entries that are taught as single isolated letters
-// (alphabet lesson) — anything embedded inside a longer real word already
-// has vowels around it and doesn't need this.
+// v3 note: Fully migrated from English to German TTS engine.
+// German text normalizer is much more predictable. Standalone letters
+// are still padded with a trailing silent or short vowel where needed
+// to prevent the engine from spelling out the letter names.
 
 const LETTER_MAP = {
-  a: "ah",
+  a: "a",
   b: "b",
   c: "k",
   d: "d",
 
-  // Open /ɛ/, not English "ee"
-  e: "eh",
+  // Pure open /ɛ/ — perfect in German as "e" or "ä"
+  e: "e",
 
   f: "f",
   g: "g",
 
-  // Arcon /x/ — approximate with "kh"
-  h: "kh",
+  // Arcon /x/ — German "ch" gives a perfect harsh 'kh' sound
+  h: "ch",
 
-  i: "ee",
+  i: "i",
 
-  // Arcon /ʒ/ — "zh"
-  j: "dj",
+  // Arcon /ʒ/ — Your genius "jh" hack for pure [ж] sound
+  j: "jh",
 
   k: "k",
   l: "l",
@@ -49,26 +43,24 @@ const LETTER_MAP = {
   o: "o",
   p: "p",
 
-  // Arcon /kʲ/ — approximate with "ky"
-  q: "ky",
+  // Arcon /kʲ/ (soft k) — approximated with "kj" in German
+  q: "kj",
 
   r: "r",
   s: "s",
   t: "t",
 
-  u: "ough",
+  // Arcon /u/ — pure "u" in German
+  u: "u",
   v: "v",
 
   // Kept for compatibility with older Arcon material.
   w: "v",
 
-  // Arcon /ks/
-  x: "ics",
+  // Arcon /ks/ — "ks" or "x" in German
+  x: "ks",
 
-  // Arcon /y/ — German ü-like vowel.
-  //
-  // Some browser voices pronounce literal "ü" more naturally
-  // than an English spelling such as "ew".
+  // Arcon /y/ — German native "ü"
   y: "ü",
 
   z: "z",
@@ -78,49 +70,31 @@ const LETTER_MAP = {
 // ============================================================
 // COMMON ARCON WORD PHONETIC FORMS
 // ============================================================
-//
-// These are not translations.
-// They are pronunciation spellings.
-//
-// The purpose is to prevent the browser from interpreting short
-// Arcon words as ordinary English words or letter names.
-//
-// Importantly, this list contains ONLY the forms that are known
-// to be problematic enough to justify a lexical pronunciation.
-// New ordinary words still fall through to LETTER_MAP.
-//
-// NOTE on the standalone single-letter entries below (j, h, q, x, u):
-// these are padded with a trailing "uh" specifically because a bare
-// vowel-less (or lone-vowel) token gets misread by the browser's text
-// normalizer (spelled out as letter names, or read with interjection
-// intonation) instead of pronounced as a plain sound. The padding is
-// only needed here — inside real multi-letter words the surrounding
-// vowels already prevent this, so qite/jy/etc. don't need it.
-
 const WORD_MAP = {
-  // Lesson 1 / basic phonology — standalone letters, padded to avoid
-  // the browser reading them as spelled-out letter names
-  j: "zhuh",
-  h: "khuh",
-  q: "kyuh",
-  x: "ksuh",
-  y: "ü",
-  e: "eh",
-  u: "ooh", // bare "oo" was read with interjection-style pitch drift; try "ooh" instead
+  // Lesson 1 / basic phonology — standalone letters
+  // Padded with a trailing "ha" or vowel to force the German engine
+  // to pronounce the sound instead of saying the alphabet letter name (e.g., "jot", "ka").
+  j: "jha",   // Reads as a short [жа]
+  h: "cha",   // Reads as [ха]
+  q: "kja",   // Reads as soft [кя]
+  x: "ksa",   // Reads as [кса]
+  y: "ü",     // German reads standalone "ü" perfectly as a sound
+  e: "ä",     // Forces open /ɛ/ sound
+  u: "uh",    // Deep pure [у]
 
   // Lesson 2
-  qite: "kyee-teh",
-  vy: "vü",
-  es: "ehss",
+  qite: "kjite",  // Soft [кь]-и-те
+  vy: "vü",       // Perfect [вю]
+  es: "es",       // Short German [эс]
 
   // Lesson 3
-  ro: "roh",
-  jy: "zhoo",
-  ane: "ah-neh",
+  ro: "ro",
+  jy: "jhü",      // Clean [жю] / [ж] + немецкий ü
+  ane: "ane",     // Clean German pronunciation [а-не]
 
   // Lesson 4
-  al: "ahl",
-  ul: "ool",
+  al: "al",
+  ul: "ul",
 };
 
 
@@ -137,7 +111,7 @@ let cachedVoice = null;
 
 
 // ============================================================
-// VOICE SELECTION
+// VOICE SELECTION (SWITCHED TO GERMAN)
 // ============================================================
 
 function pickVoice() {
@@ -149,26 +123,24 @@ function pickVoice() {
     return;
   }
 
-  const englishVoices = voices.filter(
+  // Look for German voices now
+  const germanVoices = voices.filter(
     (voice) =>
       voice.lang &&
-      voice.lang.toLowerCase().startsWith("en")
+      voice.lang.toLowerCase().startsWith("de")
   );
 
-  // Prefer a normal English voice because our input is already
-  // converted into an English-readable phonetic approximation.
-  //
-  // We intentionally do NOT ask the browser to pronounce IPA.
+  // Fallback cascade for German locales
   cachedVoice =
-    englishVoices.find(
+    germanVoices.find(
       (voice) =>
-        voice.lang.toLowerCase() === "en-us"
+        voice.lang.toLowerCase() === "de-de"
     ) ||
-    englishVoices.find(
+    germanVoices.find(
       (voice) =>
-        voice.lang.toLowerCase() === "en-gb"
+        voice.lang.toLowerCase() === "de-at"
     ) ||
-    englishVoices[0] ||
+    germanVoices[0] ||
     voices[0] ||
     null;
 }
@@ -177,7 +149,7 @@ function pickVoice() {
 if (supported) {
   pickVoice();
 
-  // Chrome and some other browsers load voices asynchronously.
+  // Chrome loads voices asynchronously
   speechSynthesis.onvoiceschanged = () => {
     pickVoice();
   };
@@ -205,12 +177,12 @@ export function isSpeakable(text) {
 function pronounceWord(word) {
   const lower = word.toLowerCase();
 
-  // First use a known pronunciation.
+  // First use a known exception map.
   if (Object.prototype.hasOwnProperty.call(WORD_MAP, lower)) {
     return WORD_MAP[lower];
   }
 
-  // Otherwise build the pronunciation from Arcon letters.
+  // Otherwise build the pronunciation letter-by-letter using German phonetics.
   let result = "";
   let i = 0;
 
@@ -220,7 +192,6 @@ function pronounceWord(word) {
     if (Object.prototype.hasOwnProperty.call(LETTER_MAP, char)) {
       result += LETTER_MAP[char];
     } else {
-      // Preserve unknown characters rather than crashing.
       result += char;
     }
 
@@ -267,11 +238,11 @@ export function speakArcon(text) {
     utterance.voice = cachedVoice;
   }
 
-  // The browser is reading our phonetic approximation as English.
-  utterance.lang = "en-US";
+  // CHANGED: The browser now reads our text using German phonetic rules
+  utterance.lang = "de-DE";
 
-  // Slightly slower gives the unusual Arcon sounds more room.
-  utterance.rate = 0.86;
+  // Slightly slower to keep the synthetic voice clear
+  utterance.rate = 0.84;
 
   utterance.pitch = 1.0;
 
