@@ -21,6 +21,12 @@
           "title": "Word types",
           "subtitle": "The core of the language.",
           "file": "0-2.json"
+        },
+        {
+          "id": "0-3",
+          "title": "Pronouns",
+          "subtitle": "I/You",
+          "file": "0-3.json"
         }
       ]
     },
