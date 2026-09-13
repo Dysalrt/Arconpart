@@ -1,11 +1,10 @@
-// tts.js — Arcon phonetic browser TTS (French-based Engine v4 - AUTO)
+// tts.js — Arcon phonetic browser TTS (Romanian-based Engine v5 - CLEAN)
 //
 // API remains the same: isSpeakable(text), speakArcon(text), stopArcon()
 //
-// v4: Fully migrated to French TTS engine. 
-// French phonetics perfectly natively map to Arcon:
-// 'j' is always [ʒ] (ж), 'v' is always [v] (в), 'u' is always [y] (ü).
-// Added automated letter combinations so we NO LONGER need a manual WORD_MAP.
+// v5: Fully migrated to Romanian TTS engine.
+// Romanian has native [ʒ] for 'j', native [v] for 'v', and native strict [e] for 'e'.
+// It reads strictly phonetically (as written), eliminating French silent letter issues.
 
 const LETTER_MAP = {
   a: "a",
@@ -13,19 +12,18 @@ const LETTER_MAP = {
   c: "k",
   d: "d",
   
-  // Французская é дает чистое, официальное закрытое [э]
-  e: "é", 
+  // В румынском 'e' — это всегда чистое, официальное [э]
+  e: "e", 
   
   f: "f",
   g: "g",
   
-  // Во французском 'h' немая, поэтому для глубокого [х] используем "ch" (в усеченной форме)
-  // или оставляем легкий выдох. Если нужен жесткий хрип — "rr" или "kh" в контексте.
-  h: "kh", 
+  // Для глубокого [х] румынская 'h' подходит идеально (звучит как чистый хрип)
+  h: "h", 
   
   i: "i",
   
-  // Нативная французская 'j' — это чистейший [ж]!
+  // Нативная румынская 'j' — это ВСЕГДА чистейший [ж] в любой позиции!
   j: "j",   
   
   k: "k",
@@ -38,24 +36,38 @@ const LETTER_MAP = {
   r: "r",
   s: "s",
   t: "t",
-  
-  // Во французском буква 'u' читается как [y] (твоя 'y' / немецкая 'ü').
-  // Поэтому твою гласную 'u' (чистый у) мы переводим во французское буквосочетание "ou"!
-  u: "ou", 
-  
-  // Звонкий [в] без немецких приколов с переходом в 'ф'
+  u: "u", 
   v: "v",
   w: "v",
   x: "ks",
   
-  // Твою 'y' (звук уь/ю) французский читает как родную 'u'
-  y: "u", 
+  // Твой звук [уь/ю] передаем через 'ü', румынский TTS прочитает её правильно
+  y: "ü", 
   z: "z",
 };
 
-// ТЕПЕРЬ ЭТОТ СПИСОК ПУСТ! Движок сам соберет слова!
 const WORD_MAP = {
-  // Оставляем пустые исключения, автоматика ниже все сделает сама
+  // Одиночные буквы (Урок 1). 
+  // Румынский нормализатор на одиночные буквы скажет их названия: "же", "ха", "ве".
+  // Поэтому для алфавита МЫ ХАРДКОДИМ чистые звуки, добавляя короткое "а" или "э":
+  j: "jă",   // Короткий [ж] с нейтральным выдохом
+  h: "hă",   // Короткий [х]
+  e: "e",    // Чистый [э]
+  q: "k",     
+  x: "ks",    
+  y: "ü",      
+  u: "u",      
+
+  // Специфические слова, где нужно скорректировать румынское произношение:
+  
+  // В румынском финальное 'i' после согласных укорачивается. 
+  // Чтобы "vi" звучало как полноценное, сочное [ви], пишем две 'ii'
+  vi: "vii", 
+  
+  // Твои слова теперь собираются АВТОМАТИЧЕСКИ и без костылей:
+  // "jy" соберется как "jü" -> нативный румынский [ж] + [ü] = идеальное [жю/жу]!
+  // "jyde" соберется как "jüde" -> идеальное [жюдэ]!
+  // "vys" соберется как "wüs" -> прочитаются ВСЕ буквы, включая 's' на конце!
 };
 
 const supported =
@@ -70,15 +82,15 @@ function pickVoice() {
   const voices = speechSynthesis.getVoices();
   if (!voices || voices.length === 0) return;
 
-  // Ищем французские голоса
-  const frenchVoices = voices.filter(
-    (voice) => voice.lang && voice.lang.toLowerCase().startsWith("fr")
+  // Ищем румынские голоса
+  const roVoices = voices.filter(
+    (voice) => voice.lang && voice.lang.toLowerCase().startsWith("ro")
   );
 
   cachedVoice =
-    frenchVoices.find((voice) => voice.lang.toLowerCase() === "fr-fr") ||
-    frenchVoices[0] ||
-    voices[0] ||
+    roVoices.find((voice) => voice.lang.toLowerCase() === "ro-ro") ||
+    roVoices ||
+    voices ||
     null;
 }
 
@@ -110,13 +122,6 @@ function pronounceWord(word) {
     i++;
   }
 
-  // ХАК ДЛЯ ФРАНЦУЗСКОГО Е НА КОНЦЕ СЛОВА:
-  // Если слово заканчивается на согласную + 'é', французский TTS может проглотить звук.
-  // Заменим финальную 'é' на 'éh' или 'ai', чтобы она прозвучала как четкое, открытое [э]
-  if (result.endsWith("é")) {
-    result = result.slice(0, -1) + "ai";
-  }
-
   return result;
 }
 
@@ -132,12 +137,12 @@ export function speakArcon(text) {
 
   const utterance = new SpeechSynthesisUtterance(phoneticText);
   
-  // Включаем французский языковой движок
-  utterance.lang = "fr-FR"; 
+  // Включаем румынский движок
+  utterance.lang = "ro-RO"; 
 
   if (cachedVoice) utterance.voice = cachedVoice;
 
-  utterance.rate = 0.85; // Чуть медленнее для четкости учебного языка
+  utterance.rate = 0.84; 
   utterance.pitch = 1.0;
   utterance.volume = 1.0;
 
