@@ -63,7 +63,7 @@ const LETTER_MAP = {
   w: "v",
 
   // Arcon /ks/
-  x: "cs",
+  x: "ics",
 
   // Arcon /y/ — German ü-like vowel.
   //
