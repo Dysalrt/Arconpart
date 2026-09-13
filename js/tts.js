@@ -10,29 +10,16 @@
 // Therefore this file uses carefully chosen phonetic spellings instead
 // of letting the English voice read Arcon spelling directly.
 //
-// The goal is:
-//   Arcon spelling → phonetic approximation → natural browser voice
-//
-// This is intentionally based on Arcon sounds, NOT English spelling rules.
-
-
-// ============================================================
-// BASIC ARCON SOUND MAP
-// ============================================================
-//
-// Arcon:
-// a = /a/
-// e = /ɛ/
-// i = /i/
-// o = /o/
-// u = /u/
-// y = /y/
-//
-// c = /k/
-// j = /ʒ/
-// q = /kʲ/
-// h = /x/
-// x = /ks/
+// v2 note: standalone letters/short clusters with no vowel (zh, kh, ky, ks)
+// or a bare lone vowel ("oo") get read as spelled-out letter names or as
+// an interjection with its own pitch contour — NOT as the intended sound.
+// This happens because the browser's text normalizer doesn't recognize
+// them as real English words. Fix: pad these specific standalone cases
+// with a neutral trailing vowel sound ("uh") so they read as ordinary
+// short words instead of triggering that fallback. This only matters for
+// the handful of entries that are taught as single isolated letters
+// (alphabet lesson) — anything embedded inside a longer real word already
+// has vowels around it and doesn't need this.
 
 const LETTER_MAP = {
   a: "ah",
@@ -102,15 +89,24 @@ const LETTER_MAP = {
 // to be problematic enough to justify a lexical pronunciation.
 // New ordinary words still fall through to LETTER_MAP.
 //
+// NOTE on the standalone single-letter entries below (j, h, q, x, u):
+// these are padded with a trailing "uh" specifically because a bare
+// vowel-less (or lone-vowel) token gets misread by the browser's text
+// normalizer (spelled out as letter names, or read with interjection
+// intonation) instead of pronounced as a plain sound. The padding is
+// only needed here — inside real multi-letter words the surrounding
+// vowels already prevent this, so qite/jy/etc. don't need it.
 
 const WORD_MAP = {
-  // Lesson 1 / basic phonology
-  j: "zh",
-  h: "kh",
-  q: "ky",
-  x: "ks",
+  // Lesson 1 / basic phonology — standalone letters, padded to avoid
+  // the browser reading them as spelled-out letter names
+  j: "zhuh",
+  h: "khuh",
+  q: "kyuh",
+  x: "ksuh",
   y: "ü",
   e: "eh",
+  u: "ooh", // bare "oo" was read with interjection-style pitch drift; try "ooh" instead
 
   // Lesson 2
   qite: "kyee-teh",
