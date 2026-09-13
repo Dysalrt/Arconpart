@@ -1,0 +1,19 @@
+{
+  "id": "0-0",
+  "title": "WARNING",
+  "xp": 10,
+  "lesson": [
+    {
+      "type": "T",
+      "title": "Warning",
+      "theory": "Before starting the course i recomend you to check IPA and go through every sound in that list\na, b, k, d, ε, f, g, h/x, i, ʒ, l, m, n, o, p, kj, r, s, t, u, y, v, ks, z\nThat's because creating the sound reading program is a big headache and a lot of sounds aren't as accurate as they should be, a lot of sounds the reader reads not quite correctly and this can cause problems in future",
+      "examples": []
+    },
+    {
+      "type": "T",
+      "title": "Thanks",
+      "theory": "Thank you for your attention, we hope you will not get problems with reading our words",
+      "examples": []
+    }
+  ]
+}
