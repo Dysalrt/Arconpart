@@ -34,19 +34,19 @@ const LETTER_MAP = {
   g: "g",
 
   // Arcon /x/ — approximate with "kh"
-  h: "kh",
+  h: "h",
 
   i: "ee",
 
   // Arcon /ʒ/ — "zh"
-  j: "zh",
+  j: "j",
 
   k: "k",
   l: "l",
   m: "m",
   n: "n",
 
-  o: "oh",
+  o: "o",
   p: "p",
 
   // Arcon /kʲ/ — approximate with "ky"
@@ -56,14 +56,14 @@ const LETTER_MAP = {
   s: "s",
   t: "t",
 
-  u: "oo",
+  u: "u",
   v: "v",
 
   // Kept for compatibility with older Arcon material.
   w: "v",
 
   // Arcon /ks/
-  x: "ks",
+  x: "x",
 
   // Arcon /y/ — German ü-like vowel.
   //
