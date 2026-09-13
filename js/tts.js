@@ -46,28 +46,26 @@ const LETTER_MAP = {
   z: "z",
 };
 
+// ============================================================
+// COMMON ARCON WORD PHONETIC FORMS
+// ============================================================
 const WORD_MAP = {
-  // Одиночные буквы (Урок 1). 
-  // Румынский нормализатор на одиночные буквы скажет их названия: "же", "ха", "ве".
-  // Поэтому для алфавита МЫ ХАРДКОДИМ чистые звуки, добавляя короткое "а" или "э":
-  j: "jă",   // Короткий [ж] с нейтральным выдохом
-  h: "hă",   // Короткий [х]
-  e: "e",    // Чистый [э]
+  // Изолированные буквы (Урок 1)
+  j: "jă",   
+  h: "hă",   
+  e: "e",    
   q: "k",     
   x: "ks",    
   y: "ü",      
   u: "u",      
 
-  // Специфические слова, где нужно скорректировать румынское произношение:
-  
-  // В румынском финальное 'i' после согласных укорачивается. 
-  // Чтобы "vi" звучало как полноценное, сочное [ви], пишем две 'ii'
   vi: "vii", 
   
-  // Твои слова теперь собираются АВТОМАТИЧЕСКИ и без костылей:
-  // "jy" соберется как "jü" -> нативный румынский [ж] + [ü] = идеальное [жю/жу]!
-  // "jyde" соберется как "jüde" -> идеальное [жюдэ]!
-  // "vys" соберется как "wüs" -> прочитаются ВСЕ буквы, включая 's' на конце!
+  // Lesson 4
+  al: "al",
+  // ХАК ДЛЯ UL: Дублируем 'u' -> 'uul'. 
+  // Женский голос четко пропевает протяжное [у-ул], полностью убирая игнорирование звука!
+  ul: "uul", 
 };
 
 const supported =
@@ -77,8 +75,10 @@ const supported =
 
 let cachedVoice = null;
 
+
+
 // ============================================================
-// VOICE SELECTION (ROMANIAN - FIXED ASSET CONVERSION)
+// VOICE SELECTION (FORCE ROMANIAN FEMALE)
 // ============================================================
 
 function pickVoice() {
@@ -87,19 +87,31 @@ function pickVoice() {
   const voices = speechSynthesis.getVoices();
   if (!voices || voices.length === 0) return;
 
-  // Ищем румынские голоса
+  // 1. Ищем все румынские голоса
   const roVoices = voices.filter(
     (voice) => voice.lang && voice.lang.toLowerCase().startsWith("ro")
   );
 
   if (roVoices.length > 0) {
-    // Берем строго ПЕРВЫЙ объект голоса из найденных румынских
-    cachedVoice = roVoices.find((voice) => voice.lang.toLowerCase() === "ro-ro") || roVoices[0];
+    // 2. Пытаемся найти среди румынских голосов ЖЕНСКИЙ 
+    // (в именах часто содержатся "female", "ioana", "elena" и т.д.)
+    const femaleRoVoice = roVoices.find((voice) => {
+      const name = voice.name.toLowerCase();
+      return name.includes("female") || 
+             name.includes("ioana") || 
+             name.includes("elena") || 
+             name.includes("ziana") ||
+             name.includes("girl");
+    });
+
+    // Если нашли женский — берем его, если нет — берем любой румынский дефолтный
+    cachedVoice = femaleRoVoice || roVoices[0];
   } else {
-    // Если на устройстве вообще нет румынского языка, берем самый первый дефолтный объект
+    // Если румынского нет, берем дефолтный голос устройства
     cachedVoice = voices[0] || null;
   }
 }
+
 
 
 if (supported) {
