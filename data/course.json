@@ -5,6 +5,12 @@
       "title": "Getting Started",
       "lessons": [
         {
+          "id": "0-0",
+          "title": "Warning",
+          "subtitle": "warning",
+          "file": "0-0.json"
+        }
+        {
           "id": "0-1",
           "title": "Letters and Sounds",
           "subtitle": "Phonetics and Alphabet.",
