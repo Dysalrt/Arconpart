@@ -1,114 +1,62 @@
-// tts.js — Arcon phonetic browser TTS (German-based Engine v3)
+// tts.js — Arcon phonetic browser TTS (French-based Engine v4 - AUTO)
 //
-// Keeps the same API used by lesson.js:
-//   isSpeakable(text)
-//   speakArcon(text)
-//   stopArcon()
+// API remains the same: isSpeakable(text), speakArcon(text), stopArcon()
 //
-// IMPORTANT:
-// Browser SpeechSynthesis does not have a standard way to receive IPA.
-// Therefore this file uses carefully chosen German phonetic spellings instead
-// of letting the German voice read Arcon spelling directly.
-//
-// v3 note: Fully migrated from English to German TTS engine.
-// German text normalizer is much more predictable. Standalone letters
-// are still padded with a trailing silent or short vowel where needed
-// to prevent the engine from spelling out the letter names.
-//
-// v3.1: "ese" was being read letter-by-letter ("i-s-e") because "äsä" —
-// whether it came from WORD_MAP or from the letter-by-letter fallback,
-// both produce the exact same string — isn't recognized as a real word
-// by the German voice, so it falls back to spelling it out. Fix: use an
-// actual existing German word that sounds close instead of an invented
-// spelling. "Esse" (chimney) is pronounced [ˈɛsə] — very close to what
-// we want — and being a real dictionary word, it's guaranteed to be read
-// normally instead of spelled out. Same trick can be reused for any other
-// short synthetic spelling that keeps getting spelled out.
+// v4: Fully migrated to French TTS engine. 
+// French phonetics perfectly natively map to Arcon:
+// 'j' is always [ʒ] (ж), 'v' is always [v] (в), 'u' is always [y] (ü).
+// Added automated letter combinations so we NO LONGER need a manual WORD_MAP.
 
 const LETTER_MAP = {
   a: "a",
   b: "b",
   c: "k",
   d: "d",
-  e: "ä", // Официальный [э]
+  
+  // Французская é дает чистое, официальное закрытое [э]
+  e: "é", 
+  
   f: "f",
   g: "g",
-  h: "gch", // Глубокий [х] внутри слов
+  
+  // Во французском 'h' немая, поэтому для глубокого [х] используем "ch" (в усеченной форме)
+  // или оставляем легкий выдох. Если нужен жесткий хрип — "rr" или "kh" в контексте.
+  h: "kh", 
+  
   i: "i",
-  j: "j",   // Внутри слов 'j' перед гласными работает как надо
-
+  
+  // Нативная французская 'j' — это чистейший [ж]!
+  j: "j",   
+  
   k: "k",
   l: "l",
   m: "m",
   n: "n",
   o: "o",
   p: "p",
-  q: "ki",
+  q: "k",
   r: "r",
   s: "s",
   t: "t",
-  u: "u",
-
-  // ХАК ДЛЯ V: В немецком буква 'v' коварно читается как [ф].
-  // Перенаправляем её на немецкую 'w', которая ВСЕГДА читается как чистый звонкий [в]!
-  v: "w",
-
-  // Сохраняем совместимость для старых материалов
-  w: "w",
-
+  
+  // Во французском буква 'u' читается как [y] (твоя 'y' / немецкая 'ü').
+  // Поэтому твою гласную 'u' (чистый у) мы переводим во французское буквосочетание "ou"!
+  u: "ou", 
+  
+  // Звонкий [в] без немецких приколов с переходом в 'ф'
+  v: "v",
+  w: "v",
   x: "ks",
-  y: "ü",
+  
+  // Твою 'y' (звук уь/ю) французский читает как родную 'u'
+  y: "u", 
   z: "z",
 };
 
-
-// ============================================================
-// COMMON ARCON WORD PHONETIC FORMS
-// ============================================================
+// ТЕПЕРЬ ЭТОТ СПИСОК ПУСТ! Движок сам соберет слова!
 const WORD_MAP = {
-  // Изолированные буквы (Урок 1)
-  j: "zsch",   // Наш победный жужжащий [ж]!
-  h: "ach",
-  e: "ä",
-  q: "ki",
-  x: "eks",
-  y: "ü",
-  u: "u",
-
-  //Lesson 1
-  vi: "w", // или "widd" — надо заставить его споткнуться и сказать коротко
-
-  // "äsä" (что от WORD_MAP, что от побуквенной сборки — результат один и тот
-  // же) читалось по буквам, потому что это не настоящее немецкое слово.
-  // "Esse" (дымоход) — настоящее слово, произносится [ˈɛsə], звучит почти
-  // так же, и движок больше не спотыкается.
-  ese: "Esse",
-
-  // Lesson 2
-  // ХАК ДЛЯ QITE: Переписали на "kjitä".
-  // 'kj' дает идеальное мягкое [кь], 'i' звучит как чистая [и], 'tä' дает строгое [тэ].
-  qite: "kjitä",
-
-  // Автоматически подхватит 'w' из LETTER_MAP и превратится в звонкое [вю]
-  vy: "wü",
-  es: "äs",
-  "jy": "jour",
-  jyde: "zschüde",
-  // Lesson 3
-  ro: "ro",
-  ane: "anä",
-
-  // Lesson 4
-  al: "al",
-  ul: "ul",
+  // Оставляем пустые исключения, автоматика ниже все сделает сама
 };
-
-
-
-
-// ============================================================
-// SPEECH SYNTHESIS SUPPORT
-// ============================================================
 
 const supported =
   typeof window !== "undefined" &&
@@ -117,159 +65,86 @@ const supported =
 
 let cachedVoice = null;
 
-
-// ============================================================
-// VOICE SELECTION (SWITCHED TO GERMAN)
-// ============================================================
-
 function pickVoice() {
   if (!supported) return;
-
   const voices = speechSynthesis.getVoices();
+  if (!voices || voices.length === 0) return;
 
-  if (!voices || voices.length === 0) {
-    return;
-  }
-
-  // Look for German voices now
-  const germanVoices = voices.filter(
-    (voice) =>
-      voice.lang &&
-      voice.lang.toLowerCase().startsWith("de")
+  // Ищем французские голоса
+  const frenchVoices = voices.filter(
+    (voice) => voice.lang && voice.lang.toLowerCase().startsWith("fr")
   );
 
-  // Fallback cascade for German locales
   cachedVoice =
-    germanVoices.find(
-      (voice) =>
-        voice.lang.toLowerCase() === "de-de"
-    ) ||
-    germanVoices.find(
-      (voice) =>
-        voice.lang.toLowerCase() === "de-at"
-    ) ||
-    germanVoices[0] ||
+    frenchVoices.find((voice) => voice.lang.toLowerCase() === "fr-fr") ||
+    frenchVoices[0] ||
     voices[0] ||
     null;
 }
 
-
 if (supported) {
   pickVoice();
-
-  // Chrome loads voices asynchronously
-  speechSynthesis.onvoiceschanged = () => {
-    pickVoice();
-  };
+  speechSynthesis.onvoiceschanged = () => { pickVoice(); };
 }
-
-
-// ============================================================
-// PUBLIC CHECK
-// ============================================================
 
 export function isSpeakable(text) {
-  return (
-    typeof text === "string" &&
-    /^[A-Za-z]+(?:\s+[A-Za-z]+)*$/.test(
-      text.trim()
-    )
-  );
+  return typeof text === "string" && /^[A-Za-z]+(?:\s+[A-Za-z]+)*$/.test(text.trim());
 }
-
-
-// ============================================================
-// WORD → PHONETIC SPELLING
-// ============================================================
 
 function pronounceWord(word) {
   const lower = word.toLowerCase();
-
-  // First use a known exception map.
   if (Object.prototype.hasOwnProperty.call(WORD_MAP, lower)) {
     return WORD_MAP[lower];
   }
 
-  // Otherwise build the pronunciation letter-by-letter using German phonetics.
   let result = "";
   let i = 0;
 
   while (i < lower.length) {
     const char = lower[i];
-
     if (Object.prototype.hasOwnProperty.call(LETTER_MAP, char)) {
       result += LETTER_MAP[char];
     } else {
       result += char;
     }
-
     i++;
+  }
+
+  // ХАК ДЛЯ ФРАНЦУЗСКОГО Е НА КОНЦЕ СЛОВА:
+  // Если слово заканчивается на согласную + 'é', французский TTS может проглотить звук.
+  // Заменим финальную 'é' на 'éh' или 'ai', чтобы она прозвучала как четкое, открытое [э]
+  if (result.endsWith("é")) {
+    result = result.slice(0, -1) + "ai";
   }
 
   return result;
 }
 
-
-// ============================================================
-// TEXT → SPEECH TEXT
-// ============================================================
-
 function transliterate(text) {
-  return text
-    .trim()
-    .split(/\s+/)
-    .map(pronounceWord)
-    // Склеиваем слова через пробел, а не через запятую.
-    // Это уберёт робо-паузы и заставит TTS читать фразу слитно и сливать звуки.
-    .join(" ");
+  return text.trim().split(/\s+/).map(pronounceWord).join(" ");
 }
 
-
-// ============================================================
-// SPEAK ARCON
-// ============================================================
-
 export function speakArcon(text) {
-  if (!supported || !isSpeakable(text)) {
-    return false;
-  }
-
+  if (!supported || !isSpeakable(text)) return false;
+  
   const phoneticText = transliterate(text);
-
-  // Stop anything currently speaking.
   speechSynthesis.cancel();
 
-  const utterance =
-    new SpeechSynthesisUtterance(
-      phoneticText
-    );
+  const utterance = new SpeechSynthesisUtterance(phoneticText);
+  
+  // Включаем французский языковой движок
+  utterance.lang = "fr-FR"; 
 
-  if (cachedVoice) {
-    utterance.voice = cachedVoice;
-  }
+  if (cachedVoice) utterance.voice = cachedVoice;
 
-  // The browser now reads our text using German phonetic rules
-  utterance.lang = "de-DE";
-
-  // Slightly slower to keep the synthetic voice clear
-  utterance.rate = 0.84;
-
+  utterance.rate = 0.85; // Чуть медленнее для четкости учебного языка
   utterance.pitch = 1.0;
-
   utterance.volume = 1.0;
 
   speechSynthesis.speak(utterance);
-
   return true;
 }
 
-
-// ============================================================
-// STOP
-// ============================================================
-
 export function stopArcon() {
-  if (supported) {
-    speechSynthesis.cancel();
-  }
+  if (supported) speechSynthesis.cancel();
 }
