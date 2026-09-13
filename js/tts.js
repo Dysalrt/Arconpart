@@ -1,71 +1,63 @@
-// tts.js — Arcon phonetic browser TTS (Romanian-based Engine v5 - CLEAN)
+// tts.js — Arcon phonetic browser TTS (English Base Engine v6 - STABLE & SOFT)
 //
 // API remains the same: isSpeakable(text), speakArcon(text), stopArcon()
 //
-// v5: Fully migrated to Romanian TTS engine.
-// Romanian has native [ʒ] for 'j', native [v] for 'v', and native strict [e] for 'e'.
-// It reads strictly phonetically (as written), eliminating French silent letter issues.
+// v6: Switched back to English engine to ensure 100% device compatibility.
+// Fully automated phonetic translation into English syllables.
+// Hard-coded rules force English voices to say soft [ʒ], clean [y/ü] and clear [u].
 
 const LETTER_MAP = {
-  a: "a",
+  a: "ah",   // Чистый открытый [а]
   b: "b",
   c: "k",
   d: "d",
-  
-  // В румынском 'e' — это всегда чистое, официальное [э]
-  e: "e", 
-  
+  e: "eh",   // Чистый официальный [э] (как в слове "eh")
   f: "f",
   g: "g",
-  
-  // Для глубокого [х] румынская 'h' подходит идеально (звучит как чистый хрип)
-  h: "h", 
-  
-  i: "i",
-  
-  // Нативная румынская 'j' — это ВСЕГДА чистейший [ж] в любой позиции!
-  j: "j",   
-  
+  h: "kh",   // Глубокий хриплый [х]
+  i: "ee",   // Чистый [и]
+
+  // СТАБИЛЬНЫЙ Ж: "zh" заставляет английский TTS выдать чистый, 
+  // мягкий, жужжащий звук [ʒ] (как в слове vision / measure)
+  j: "zh",   
+
   k: "k",
   l: "l",
   m: "m",
   n: "n",
   o: "o",
   p: "p",
-  q: "k",
+  q: "ky",   // Мягкий [кь]
   r: "r",
   s: "s",
   t: "t",
-  u: "u", 
+  
+  // СТАБИЛЬНЫЙ У: "oo" дает мягкий глубокий звук [у]
+  u: "oo",   
+  
   v: "v",
   w: "v",
   x: "ks",
   
-  // Твой звук [уь/ю] передаем через 'ü', румынский TTS прочитает её правильно
-  y: "ü", 
+  // СТАБИЛЬНЫЙ УЬ/Ю: "ew" или "u" в американском английском дает нужный срез [y]
+  y: "ew",   
   z: "z",
 };
 
-// ============================================================
-// COMMON ARCON WORD PHONETIC FORMS
-// ============================================================
+// WORD_MAP теперь пустой — автоматика сама склеит фонемы как нужно!
 const WORD_MAP = {
-  // Изолированные буквы (Урок 1)
-  j: "jă",   
-  h: "hă",   
-  e: "e",    
-  q: "k",     
-  x: "ks",    
-  y: "ü",      
-  u: "u",      
+  // Изолированные буквы (Урок 1) — добавляем нейтральный гласный хвост "uh" ([э]),
+  // чтобы движок не читал одиночные буквы по алфавиту (как "джей", "эйч").
+  j: "zhuh",   // Четкий короткий [ж]
+  h: "khuh",   // Четкий короткий [х]
+  e: "eh",     // Чистый [э]
+  q: "kyuh",     
+  x: "ksuh",    
+  y: "ew",      
+  u: "ooh",    
 
-  vi: "vii", 
-  
-  // Lesson 4
-  al: "al",
-  // ХАК ДЛЯ UL: Дублируем 'u' -> 'uul'. 
-  // Женский голос четко пропевает протяжное [у-ул], полностью убирая игнорирование звука!
-  ul: "uul", 
+  // Исключение для слова "vi", чтобы оно не растягивалось:
+  vi: "v",
 };
 
 const supported =
@@ -75,44 +67,32 @@ const supported =
 
 let cachedVoice = null;
 
-
-
-// ============================================================
-// VOICE SELECTION (FORCE ROMANIAN FEMALE)
-// ============================================================
-
+// Ищем качественный женский английский голос (Google, Microsoft, Apple)
 function pickVoice() {
   if (!supported) return;
-
   const voices = speechSynthesis.getVoices();
   if (!voices || voices.length === 0) return;
 
-  // 1. Ищем все румынские голоса
-  const roVoices = voices.filter(
-    (voice) => voice.lang && voice.lang.toLowerCase().startsWith("ro")
+  const englishVoices = voices.filter(
+    (voice) => voice.lang && voice.lang.toLowerCase().startsWith("en")
   );
 
-  if (roVoices.length > 0) {
-    // 2. Пытаемся найти среди румынских голосов ЖЕНСКИЙ 
-    // (в именах часто содержатся "female", "ioana", "elena" и т.д.)
-    const femaleRoVoice = roVoices.find((voice) => {
+  if (englishVoices.length > 0) {
+    // Ищем женские голоса (Zira, Google US English, Samantha, Hazel, etc.)
+    const femaleVoice = englishVoices.find((voice) => {
       const name = voice.name.toLowerCase();
-      return name.includes("female") || 
-             name.includes("ioana") || 
-             name.includes("elena") || 
-             name.includes("ziana") ||
-             name.includes("girl");
+      return name.includes("zira") || 
+             name.includes("google us english") || 
+             name.includes("samantha") || 
+             name.includes("hazel") ||
+             name.includes("female") ||
+             name.includes("natural");
     });
-
-    // Если нашли женский — берем его, если нет — берем любой румынский дефолтный
-    cachedVoice = femaleRoVoice || roVoices[0];
+    cachedVoice = femaleVoice || englishVoices[0];
   } else {
-    // Если румынского нет, берем дефолтный голос устройства
     cachedVoice = voices[0] || null;
   }
 }
-
-
 
 if (supported) {
   pickVoice();
@@ -141,7 +121,6 @@ function pronounceWord(word) {
     }
     i++;
   }
-
   return result;
 }
 
@@ -156,13 +135,11 @@ export function speakArcon(text) {
   speechSynthesis.cancel();
 
   const utterance = new SpeechSynthesisUtterance(phoneticText);
-  
-  // Включаем румынский движок
-  utterance.lang = "ro-RO"; 
+  utterance.lang = "en-US"; 
 
   if (cachedVoice) utterance.voice = cachedVoice;
 
-  utterance.rate = 0.84; 
+  utterance.rate = 0.82; // Мягкий, размеренный темп для четкости гласных
   utterance.pitch = 1.0;
   utterance.volume = 1.0;
 
