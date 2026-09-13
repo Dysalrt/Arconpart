@@ -14,6 +14,16 @@
 // German text normalizer is much more predictable. Standalone letters
 // are still padded with a trailing silent or short vowel where needed
 // to prevent the engine from spelling out the letter names.
+//
+// v3.1: "ese" was being read letter-by-letter ("i-s-e") because "äsä" —
+// whether it came from WORD_MAP or from the letter-by-letter fallback,
+// both produce the exact same string — isn't recognized as a real word
+// by the German voice, so it falls back to spelling it out. Fix: use an
+// actual existing German word that sounds close instead of an invented
+// spelling. "Esse" (chimney) is pronounced [ˈɛsə] — very close to what
+// we want — and being a real dictionary word, it's guaranteed to be read
+// normally instead of spelled out. Same trick can be reused for any other
+// short synthetic spelling that keeps getting spelled out.
 
 const LETTER_MAP = {
   a: "a",
@@ -42,10 +52,10 @@ const LETTER_MAP = {
   // ХАК ДЛЯ V: В немецком буква 'v' коварно читается как [ф].
   // Перенаправляем её на немецкую 'w', которая ВСЕГДА читается как чистый звонкий [в]!
   v: "w",
-  
+
   // Сохраняем совместимость для старых материалов
   w: "w",
-  
+
   x: "ks",
   y: "ü",
   z: "z",
@@ -58,29 +68,35 @@ const LETTER_MAP = {
 const WORD_MAP = {
   // Изолированные буквы (Урок 1)
   j: "zsch",   // Наш победный жужжащий [ж]!
-  h: "ach",    
-  e: "ä",     
-  q: "ki",     
-  x: "eks",    
-  y: "ü",      
-  u: "u",      
+  h: "ach",
+  e: "ä",
+  q: "ki",
+  x: "eks",
+  y: "ü",
+  u: "u",
 
   //Lesson 1
   vi: "w", // или "widd" — надо заставить его споткнуться и сказать коротко
-  ese: "äsä",
+
+  // "äsä" (что от WORD_MAP, что от побуквенной сборки — результат один и тот
+  // же) читалось по буквам, потому что это не настоящее немецкое слово.
+  // "Esse" (дымоход) — настоящее слово, произносится [ˈɛsə], звучит почти
+  // так же, и движок больше не спотыкается.
+  ese: "Esse",
+
   // Lesson 2
-  // ХАК ДЛЯ QITE: Переписали на "kjitä". 
-  // 'kj' дает идеальное мягкое [кь], 'i' звучит как чистая [и], 'tä' дает строгое [тэ]. 
-  qite: "kjitä",  
-  
+  // ХАК ДЛЯ QITE: Переписали на "kjitä".
+  // 'kj' дает идеальное мягкое [кь], 'i' звучит как чистая [и], 'tä' дает строгое [тэ].
+  qite: "kjitä",
+
   // Автоматически подхватит 'w' из LETTER_MAP и превратится в звонкое [вю]
-  vy: "wü",       
-  es: "äs",       
+  vy: "wü",
+  es: "äs",
 
   // Lesson 3
   ro: "ro",
-  jy: "jü",      
-  ane: "anä",    
+  jy: "jü",
+  ane: "anä",
 
   // Lesson 4
   al: "al",
@@ -203,9 +219,9 @@ function transliterate(text) {
     .trim()
     .split(/\s+/)
     .map(pronounceWord)
-    // ИСПРАВЛЕНО: Склеиваем слова через пробел, а не через запятую.
+    // Склеиваем слова через пробел, а не через запятую.
     // Это уберёт робо-паузы и заставит TTS читать фразу слитно и сливать звуки.
-    .join(" "); 
+    .join(" ");
 }
 
 
@@ -232,7 +248,7 @@ export function speakArcon(text) {
     utterance.voice = cachedVoice;
   }
 
-  // CHANGED: The browser now reads our text using German phonetic rules
+  // The browser now reads our text using German phonetic rules
   utterance.lang = "de-DE";
 
   // Slightly slower to keep the synthetic voice clear
