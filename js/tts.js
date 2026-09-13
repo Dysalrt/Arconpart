@@ -39,7 +39,7 @@ const LETTER_MAP = {
   i: "ee",
 
   // Arcon /ʒ/ — "zh"
-  j: "dzh",
+  j: "dj",
 
   k: "k",
   l: "l",
