@@ -95,7 +95,6 @@ const WORD_MAP = {
   "jy": "zschü",
   // Lesson 3
   ro: "ro",
-  jy: "jü",
   ane: "anä",
 
   // Lesson 4
