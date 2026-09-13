@@ -92,7 +92,7 @@ const WORD_MAP = {
   // Автоматически подхватит 'w' из LETTER_MAP и превратится в звонкое [вю]
   vy: "wü",
   es: "äs",
-  "jy": "jühl",
+  "jy": "zschühl",
   // Lesson 3
   ro: "ro",
   ane: "anä",
