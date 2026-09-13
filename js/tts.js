@@ -77,8 +77,13 @@ const supported =
 
 let cachedVoice = null;
 
+// ============================================================
+// VOICE SELECTION (ROMANIAN - FIXED ASSET CONVERSION)
+// ============================================================
+
 function pickVoice() {
   if (!supported) return;
+
   const voices = speechSynthesis.getVoices();
   if (!voices || voices.length === 0) return;
 
@@ -87,12 +92,15 @@ function pickVoice() {
     (voice) => voice.lang && voice.lang.toLowerCase().startsWith("ro")
   );
 
-  cachedVoice =
-    roVoices.find((voice) => voice.lang.toLowerCase() === "ro-ro") ||
-    roVoices ||
-    voices ||
-    null;
+  if (roVoices.length > 0) {
+    // Берем строго ПЕРВЫЙ объект голоса из найденных румынских
+    cachedVoice = roVoices.find((voice) => voice.lang.toLowerCase() === "ro-ro") || roVoices[0];
+  } else {
+    // Если на устройстве вообще нет румынского языка, берем самый первый дефолтный объект
+    cachedVoice = voices[0] || null;
+  }
 }
+
 
 if (supported) {
   pickVoice();
