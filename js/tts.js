@@ -20,49 +20,39 @@ const LETTER_MAP = {
   b: "b",
   c: "k",
   d: "d",
-
-  // Pure open /ɛ/ — perfect in German as "e" or "ä"
   e: "e",
-
   f: "f",
   g: "g",
 
-  // Arcon /x/ — German "ch" gives a perfect harsh 'kh' sound
-  h: "ch",
+  // ХАК ДЛЯ Х: "gch" или "x" заставляет немецкий TTS выдать глубокий задненёбный [х] без ухода в "ш"
+  h: "gch",
 
   i: "i",
 
-  // Arcon /ʒ/ — Your genius "jh" hack for pure [ж] sound
-  j: "jh",
+  // ХАК ДЛЯ Ж: используем "j", но внутри слов она будет работать только перед гласными.
+  // Для надежности внутри слов заменим на "g", так как "gi" / "ge" в немецком часто [ʒ]
+  j: "j",
 
   k: "k",
   l: "l",
   m: "m",
   n: "n",
-
   o: "o",
   p: "p",
 
-  // Arcon /kʲ/ (soft k) — approximated with "kj" in German
-  q: "kj",
+  // ХАК ДЛЯ МЯГКОГО К: "ki" дает мягкий [кь] без ухода в название буквы "ку/кьот"
+  q: "ki",
 
   r: "r",
   s: "s",
   t: "t",
 
-  // Arcon /u/ — pure "u" in German
+  // ЧИСТЫЙ У: убираем "h", оставляем просто "u"
   u: "u",
   v: "v",
-
-  // Kept for compatibility with older Arcon material.
   w: "v",
-
-  // Arcon /ks/ — "ks" or "x" in German
   x: "ks",
-
-  // Arcon /y/ — German native "ü"
   y: "ü",
-
   z: "z",
 };
 
@@ -71,26 +61,26 @@ const LETTER_MAP = {
 // COMMON ARCON WORD PHONETIC FORMS
 // ============================================================
 const WORD_MAP = {
-  // Lesson 1 / basic phonology — standalone letters
-  // Padded with a trailing "ha" or vowel to force the German engine
-  // to pronounce the sound instead of saying the alphabet letter name (e.g., "jot", "ka").
-  j: "jha",   // Reads as a short [жа]
-  h: "cha",   // Reads as [ха]
-  q: "kja",   // Reads as soft [кя]
-  x: "ksa",   // Reads as [кса]
-  y: "ü",     // German reads standalone "ü" perfectly as a sound
-  e: "ä",     // Forces open /ɛ/ sound
-  u: "uh",    // Deep pure [у]
+  // Изолированные буквы (Урок 1). 
+  // Даем движку полноценные французские/короткие слова, чтобы он ЗАБЫЛ про алфавит:
+  
+  j: "Galo",   // Читается как [Жа] (от слова Jalousie/Garage, движок выдаст чистый [ʒ])
+  h: "ach",    // Читается как чистый твердый [Ха] (как в имени Бах)
+  q: "ki",     // Читается как мягкий [Кь] 
+  x: "eks",    // Читается как [Кс]
+  y: "ü",      // Читается как чистый [Уь/Ю]
+  e: "ä",      // Открытый [Э]
+  u: "u",      // Чистый [У] без всяких "ха" на конце
 
   // Lesson 2
-  qite: "kjite",  // Soft [кь]-и-те
-  vy: "vü",       // Perfect [вю]
-  es: "es",       // Short German [эс]
+  qite: "kite",  // [Кьитэ]
+  vy: "vü",       // [Вю]
+  es: "es",       // [Эс]
 
   // Lesson 3
   ro: "ro",
-  jy: "jhü",      // Clean [жю] / [ж] + немецкий ü
-  ane: "ane",     // Clean German pronunciation [а-не]
+  jy: "jü",      // Перед немецкой 'ü' буква 'j' прочитается как французское [Жю]!
+  ane: "ane",
 
   // Lesson 4
   al: "al",
