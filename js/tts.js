@@ -93,6 +93,7 @@ const WORD_MAP = {
   vy: "wü",
   es: "äs",
   "jy": "jour",
+  jyde: "zschüde",
   // Lesson 3
   ro: "ro",
   ane: "anä",
