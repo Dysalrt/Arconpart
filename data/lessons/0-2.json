@@ -22,7 +22,7 @@
       "title": "Type 2 — ends in a consonant",
       "theory": "And a couple that don't:",
       "examples": [
-        { "word": "hul", "ipa": "", "translation": "to want — ends in l" },
+        { "word": "hyl", "ipa": "", "translation": "to want — ends in l" },
         { "word": "es", "ipa": "", "translation": "to be — ends in s" }
       ]
     },
@@ -41,6 +41,16 @@
       "ipaHint": null,
       "options": ["Type 1", "Type 2"],
       "answer": "Type 2"
+    },
+    {
+      "type": "E",
+      "Etype": "match",
+      "pairs": [
+        ["qite", "Type 1"],
+        ["vy", "Type 1"],
+        ["hyl", "Type 2"],
+        ["es", "Type 2"]
+      ]
     },
     {
       "type": "T",
