@@ -1,23 +1,29 @@
-// tts.js — Arcon phonetic browser TTS (English Base Engine v7 - MALE & STABLE)
+// tts.js — Arcon phonetic browser TTS (German Base Engine v8 - LANGUAGE UPDATE)
 //
 // API remains the same: isSpeakable(text), speakArcon(text), stopArcon()
 //
-// v7: Restored MALE voice preference. Kept the stable English engine
-// base for 100% cross-device compatibility. Fully automated phonetics.
+// v8: Returned to German engine. Applied core language update: 
+// Letter 'j' now officially produces the [ʃ] (sh) sound.
+// Fully automated phonetic building, NO MORE manual WORD_MAP hacks needed.
 
 const LETTER_MAP = {
-  a: "ah",   // Чистый открытый [а]
+  a: "a",
   b: "b",
   c: "k",
   d: "d",
-  e: "eh",   // Чистый официальный [э]
+  
+  // Официальный строгий [э] через немецкий умляут
+  e: "ä", 
+  
   f: "f",
   g: "g",
-  h: "kh",   // Глубокий хриплый [х]
-  i: "ee",   // Чистый [и]
   
-  // Наш проверенный жужжащий [ж] (как в слове vision)
-  j: "zh",   
+  // Глубокий немецкий [х] внутри слов (как в Bach)
+  h: "ch", 
+  i: "i",
+  
+  // ОБНОВЛЕНИЕ ЯЗЫКА: Теперь 'j' — это немецкий чистейший "sch" [ʃ] (ш)
+  j: "sch",   
   
   k: "k",
   l: "l",
@@ -25,32 +31,36 @@ const LETTER_MAP = {
   n: "n",
   o: "o",
   p: "p",
-  q: "ky",   // Мягкий [кь]
+  q: "ki",   // Мягкий [кь]
   r: "r",
   s: "s",
   t: "t",
-  u: "oo",   // Мягкий глубокий [у]
-  v: "v",
-  w: "v",
+  u: "u",    // Чистый [у]
+  
+  // Настоящий звонкий [в] через немецкую 'w'
+  v: "w",
+  w: "w",
   x: "ks",
-  y: "ew",   // Твой [уь/ю]
+  
+  // Твой звук [уь/ю] через нативный немецкий умляут
+  y: "ü", 
   z: "z",
 };
 
-// Автоматика сама соберет все нужные слова
+// WORD_MAP теперь пустой — немецкая автоматика сама прочитает всё как пишется!
 const WORD_MAP = {
-  // Изолированные буквы (Урок 1) — добавляем "uh" ([э]),
-  // чтобы мужской голос не читал одиночные буквы по алфавиту.
-  j: "zhuh",   // Четкий короткий [ж]
-  h: "khuh",   // Четкий короткий [х]
-  e: "eh",     // Чистый [э]
-  q: "kyuh",     
-  x: "ksuh",    
-  y: "ew",      
-  u: "ooh",    
+  // Изолированные буквы (Урок 1) — добавляем короткий гласный хвостик, 
+  // чтобы движок не читал алфавитные названия букв ("ха", "у", "ку").
+  j: "scha",   // Чистый короткий звук [ш]
+  h: "cha",    // Чистый короткий звук [х]
+  e: "ä",      // Официальный [э]
+  q: "kia",     
+  x: "ksa",    
+  y: "ü",      
+  u: "u",      
 
-  // Исключение для слова "vi", чтобы мужской голос не тянул его:
-  vi: "v",
+  // Исключение для слова "vi", чтобы оно звучало отрывисто и без затягивания:
+  vi: "w",
 };
 
 const supported =
@@ -60,29 +70,27 @@ const supported =
 
 let cachedVoice = null;
 
-// Фильтруем голоса и принудительно ищем качественный МУЖСКОЙ английский голос
+// Ищем качественный МУЖСКОЙ немецкий голос
 function pickVoice() {
   if (!supported) return;
   const voices = speechSynthesis.getVoices();
   if (!voices || voices.length === 0) return;
 
-  const englishVoices = voices.filter(
-    (voice) => voice.lang && voice.lang.toLowerCase().startsWith("en")
+  const germanVoices = voices.filter(
+    (voice) => voice.lang && voice.lang.toLowerCase().startsWith("de")
   );
 
-  if (englishVoices.length > 0) {
-    // Ищем маркеры мужских голосов (David, Mark, George, Google Male, George, etc.)
-    const maleVoice = englishVoices.find((voice) => {
+  if (germanVoices.length > 0) {
+    // Ищем мужские немецкие голоса (Stefan, Markus, Google Deutsch, Male, etc.)
+    const maleVoice = germanVoices.find((voice) => {
       const name = voice.name.toLowerCase();
-      return name.includes("david") || 
-             name.includes("mark") || 
-             name.includes("george") || 
+      return name.includes("stefan") || 
+             name.includes("markus") || 
              name.includes("male") ||
-             name.includes("premium male") ||
+             name.includes("premium") ||
              name.includes("guy");
     });
-    // Если мужской нашли — ставим его, если нет — берем первый доступный английский
-    cachedVoice = maleVoice || englishVoices[0];
+    cachedVoice = maleVoice || germanVoices[0];
   } else {
     cachedVoice = voices[0] || null;
   }
@@ -129,12 +137,12 @@ export function speakArcon(text) {
   speechSynthesis.cancel();
 
   const utterance = new SpeechSynthesisUtterance(phoneticText);
-  utterance.lang = "en-US"; 
+  utterance.lang = "de-DE"; 
 
   if (cachedVoice) utterance.voice = cachedVoice;
 
-  utterance.rate = 0.83; // Размеренный, строгий темп для мужского голоса
-  utterance.pitch = 0.95; // Чуть-чуть занижаем тон для большей солидности и брутальности
+  utterance.rate = 0.83; // Размеренный, строгий мужской темп
+  utterance.pitch = 0.95; // Солидный низкий тон
   utterance.volume = 1.0;
 
   speechSynthesis.speak(utterance);
