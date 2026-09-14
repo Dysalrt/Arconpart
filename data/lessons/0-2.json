@@ -43,16 +43,6 @@
       "answer": "Type 2"
     },
     {
-      "type": "E",
-      "Etype": "match",
-      "pairs": [
-        ["qite", "Type 1"],
-        ["vy", "Type 1"],
-        ["hyl", "Type 2"],
-        ["es", "Type 2"]
-      ]
-    },
-    {
       "type": "T",
       "title": "Keep this in mind",
       "theory": "You'll run into Type 1 / Type 2 again very soon — for example, it decides exactly how a verb changes when you put it in the present tense. Whenever a new rule mentions \"Type 1\" or \"Type 2\", come back to this idea: just look at the last letter.",
