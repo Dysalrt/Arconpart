@@ -22,14 +22,6 @@
       ]
     },
     {
-      "type": "E",
-      "Etype": "choice",
-      "prompt": "How is the special letter y pronounced?",
-      "ipaHint": null,
-      "options": ["[u]", "[y]", "[o]", "[i]"],
-      "answer": "[y]"
-    },
-    {
       "type": "T",
       "title": "Consonants",
       "theory": "Consonants are very predictable (b, d, f, g, l, m, n, p, r, s, t, v, z — as usual), but there are a few worth knowing about:",
