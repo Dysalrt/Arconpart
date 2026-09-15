@@ -1,0 +1,53 @@
+{
+  "id": "1-3",
+  "title": "Present yourself",
+  "xp": 10,
+  "lesson": [
+    {
+      "type": "T",
+      "title": "Ask for someone's name",
+      "theory": "To ask someone's name you have to say \"Qo ese vys hux?\" however if we were to translate it word by word then it would mean \"How is your name\", and that is the correct way to say it, remember this small paradox because it's essential in comunication",
+      "examples": []
+    },
+    {
+      "type": "T",
+      "title": "How to respond",
+      "theory": "If someone asks you for your name then say \"Vis hux ese\" and then say your name, you can also add \"it vys hux?\"(and your name?) or just \"it vys?\" to ask back",
+      "examples": []
+    },
+    {
+      "type": "E",
+      "Etype": "write",
+      "prompt": "If your name is Mark, then what should you answer when someone asks you \"Qo ese vys hux?\"",
+      "speak": "Qo ese vys hux",
+      "ipaHint": null,
+      "answers": [
+        "Vis hux ese Mark",
+        "Vis hux ese Mark it vys?",
+        "Vis hux ese Mark it vys hux?"
+      ]
+    },
+    {
+      "type": "T",
+      "title": "Repetition",
+      "theory": "From what we've learned now we can corelate some words",
+      "examples": [
+        {
+          "word": "hux",
+          "ipa": "huks",
+          "translation": "name"
+        },
+        {
+          "word": "qo",
+          "ipa": "kjo",
+          "translation": "how"
+        },
+        {
+          "word": "it",
+          "ipa": "it",
+          "translation": "and"
+        }
+      ]
+    }
+  ]
+}
