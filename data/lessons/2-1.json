@@ -1,0 +1,76 @@
+{
+  "id": "2-1",
+  "title": "Order at cafe pt1",
+  "xp": 10,
+  "lesson": [
+    {
+      "type": "T",
+      "title": "Basic words",
+      "theory": "Words for this lesson",
+      "examples": [
+        {
+          "word": "cofe",
+          "ipa": "kofε",
+          "translation": "coffee"
+        },
+        {
+          "word": "tei",
+          "ipa": "tεi",
+          "translation": "tea"
+        },
+        {
+          "word": "dezert",
+          "ipa": "dεzεrt",
+          "translation": "dessert"
+        },
+        {
+          "word": "xer",
+          "ipa": "ksεr",
+          "translation": "please"
+        }
+      ]
+    },
+    {
+      "type": "E",
+      "Etype": "match",
+      "pairs": [
+        [
+          "qite",
+          "hello"
+        ],
+        [
+          "xer",
+          "please"
+        ],
+        [
+          "tei",
+          "tea"
+        ],
+        [
+          "cofe",
+          "coffee"
+        ]
+      ]
+    },
+    {
+      "type": "E",
+      "Etype": "write",
+      "prompt": "Translate the sentence\nTei, xer",
+      "speak": "Tei, xer",
+      "ipaHint": "tεi, ksεr",
+      "answers": [
+        "Tea please"
+      ]
+    },
+    {
+      "type": "E",
+      "Etype": "write",
+      "prompt": "Translate the sentence\nQite, cofe, xer",
+      "speak": "Qite, cofe, xer",
+      "ipaHint": null,
+      "answers": [
+        "Hello coffee please"
+      ]
+    }
+  ]
+}
