@@ -63,6 +63,12 @@
           "title": "Order at cafe I",
           "subtitle": "Understand key words",
           "file": "2-1.json"
+        },
+        {
+          "id": "2-2",
+          "title": "Order at cafe(and restaurant) pt2",
+          "subtitle": "learn plural",
+          "file": "2-2.json"
         }
       ]
     }
