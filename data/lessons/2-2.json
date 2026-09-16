@@ -1,0 +1,86 @@
+{
+  "id": "2-2",
+  "title": "Order at cafe(and restaurant) pt2",
+  "xp": 10,
+  "lesson": [
+    {
+      "type": "T",
+      "title": "Basic words",
+      "theory": "For this lesson you should know",
+      "examples": [
+        {
+          "word": "von",
+          "ipa": "von",
+          "translation": "one"
+        },
+        {
+          "word": "var",
+          "ipa": "var",
+          "translation": "two"
+        },
+        {
+          "word": "jil",
+          "ipa": "ʃil",
+          "translation": "for"
+        },
+        {
+          "word": "ums",
+          "ipa": "ums",
+          "translation": "person"
+        },
+        {
+          "word": "atejaj",
+          "ipa": "ateʃaʃ",
+          "translation": "table"
+        }
+      ]
+    },
+    {
+      "type": "T",
+      "title": "Creating plural",
+      "theory": "To form plural of a noun you have to use this simple rule\nType 1: +n\nType 2: +en",
+      "examples": [
+        {
+          "word": "ums->umsen",
+          "ipa": "",
+          "translation": "person-people"
+        },
+        {
+          "word": "atejej -> atejejen",
+          "ipa": "",
+          "translation": "table-tables"
+        }
+      ]
+    },
+    {
+      "type": "E",
+      "Etype": "write",
+      "prompt": "Translate\nVar dezerten xer",
+      "speak": "Var dezerten xer",
+      "ipaHint": null,
+      "answers": [
+        "Two desserts please"
+      ]
+    },
+    {
+      "type": "E",
+      "Etype": "write",
+      "prompt": "Translate\nOne dessert please",
+      "speak": null,
+      "ipaHint": null,
+      "answers": [
+        "Von dezert xer"
+      ]
+    },
+    {
+      "type": "E",
+      "Etype": "write",
+      "prompt": "Translate\nVon atejej jil var umsen xer",
+      "speak": null,
+      "ipaHint": null,
+      "answers": [
+        "One table for two people please"
+      ]
+    }
+  ]
+}
