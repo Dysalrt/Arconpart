@@ -1,77 +1,64 @@
-// tts.js — Arcon phonetic browser TTS (German Base Engine v8 - LANGUAGE UPDATE)
+// tts.js — Arcon phonetic browser TTS (German Base Engine v9)
 //
-// API remains the same: isSpeakable(text), speakArcon(text), stopArcon()
+// API:
+//   isSpeakable(text)
+//   speakArcon(text)
+//   stopArcon()
 //
-// v8: Returned to German engine. Applied core language update: 
-// Letter 'j' now officially produces the [ʃ] (sh) sound.
-// Fully automated phonetic building, NO MORE manual WORD_MAP hacks needed.
+// v9:
+// - Added stress support using apostrophe '
+// - Example: a'ne
+// - Apostrophe is NOT pronounced
+// - Stress is simulated by speaking the stressed syllable/part
+//   slightly slower and with a slightly higher pitch.
+// - German browser TTS engine remains the base engine.
+// - Existing v8 phonetic mapping is preserved.
 
 const LETTER_MAP = {
   a: "a",
   b: "b",
   c: "k",
   d: "d",
-  
-  // Официальный строгий [э] через немецкий умляут
-  e: "ä", 
-  
+  e: "ä",
   f: "f",
   g: "g",
-  
-  // Глубокий немецкий [х] внутри слов (как в Bach)
-  h: "h", 
+  h: "h",
   i: "i",
-  
-  // ОБНОВЛЕНИЕ ЯЗЫКА: Теперь 'j' — это немецкий чистейший "sch" [ʃ] (ш)
-  j: "sch",   
-  
+  j: "sch",
   k: "k",
   l: "l",
   m: "m",
   n: "n",
   o: "o",
   p: "p",
-  q: "ki",   // Мягкий [кь]
+  q: "ki",
   r: "r",
   s: "s",
   t: "t",
-  u: "u",    // Чистый [у]
-  
-  // Настоящий звонкий [в] через немецкую 'w'
+  u: "u",
   v: "w",
   w: "w",
   x: "x",
-  
-  // Твой звук [уь/ю] через нативный немецкий умляут
-  y: "ü", 
+  y: "ü",
   z: "z",
 };
 
-// WORD_MAP теперь пустой — немецкая автоматика сама прочитает всё как пишется!
 const WORD_MAP = {
-  // Изолированные буквы (Урок 1) — добавляем короткий гласный хвостик, 
-  // чтобы движок не читал алфавитные названия букв ("ха", "у", "ку").
-  j: "scha",   // Чистый короткий звук [ш]
-  h: "h",    // Чистый короткий звук [х]
-  e: "ä",      // Официальный [э]
-  q: "ki",     
-  x: "x",    
-  y: "ü",      
-  u: "u",      
+  j: "scha",
+  h: "h",
+  e: "ä",
+  q: "ki",
+  x: "x",
+  y: "ü",
+  u: "u",
+
   qite: "kietä",
   ese: "esse",
   hul: "huhl",
-  // Исключение для слова "vi", чтобы оно звучало отрывисто и без затягивания:
   vi: "w",
   qo: "qö",
   cofe: "Kaffee",
-
-  // ХАК ДЛЯ DEZERT: Немецкая 's' перед гласной дает звонкий звук [з], 
-  // а умляуты держат официальный звук [э]. На выходе — чистое [дэзэрт]!
   dezert: "däsärt",
-
-  // ХАК ДЛЯ XER: Прямая буквенная сборка "ksär" заставляет движок 
-  // забыть про название буквы "экс" и выдать монолитное [ксэр].
   xer: "ksähr",
   von: "woon",
   var: "wahr"
@@ -84,26 +71,36 @@ const supported =
 
 let cachedVoice = null;
 
-// Ищем качественный МУЖСКОЙ немецкий голос
+// ------------------------------------------------------------
+// Voice selection
+// ------------------------------------------------------------
+
 function pickVoice() {
   if (!supported) return;
+
   const voices = speechSynthesis.getVoices();
+
   if (!voices || voices.length === 0) return;
 
   const germanVoices = voices.filter(
-    (voice) => voice.lang && voice.lang.toLowerCase().startsWith("de")
+    (voice) =>
+      voice.lang &&
+      voice.lang.toLowerCase().startsWith("de")
   );
 
   if (germanVoices.length > 0) {
-    // Ищем мужские немецкие голоса (Stefan, Markus, Google Deutsch, Male, etc.)
     const maleVoice = germanVoices.find((voice) => {
       const name = voice.name.toLowerCase();
-      return name.includes("stefan") || 
-             name.includes("markus") || 
-             name.includes("male") ||
-             name.includes("premium") ||
-             name.includes("guy");
+
+      return (
+        name.includes("stefan") ||
+        name.includes("markus") ||
+        name.includes("male") ||
+        name.includes("premium") ||
+        name.includes("guy")
+      );
     });
+
     cachedVoice = maleVoice || germanVoices[0];
   } else {
     cachedVoice = voices[0] || null;
@@ -112,57 +109,302 @@ function pickVoice() {
 
 if (supported) {
   pickVoice();
-  speechSynthesis.onvoiceschanged = () => { pickVoice(); };
+
+  speechSynthesis.onvoiceschanged = () => {
+    pickVoice();
+  };
 }
 
+// ------------------------------------------------------------
+// Text validation
+// ------------------------------------------------------------
+//
+// Apostrophe ' is now allowed because it marks stress.
+//
+// Examples:
+//   ane
+//   a'ne
+//   v'our
+//
+// Spaces are still allowed between words.
+//
+
 export function isSpeakable(text) {
-  return typeof text === "string" && /^[A-Za-z]+(?:\s+[A-Za-z]+)*$/.test(text.trim());
+  return (
+    typeof text === "string" &&
+    /^[A-Za-z]+(?:'[A-Za-z]+)*(?:\s+[A-Za-z]+(?:'[A-Za-z]+)*)*$/.test(
+      text.trim()
+    )
+  );
 }
+
+// ------------------------------------------------------------
+// Basic Arcon -> German phonetic transliteration
+// ------------------------------------------------------------
 
 function pronounceWord(word) {
   const lower = word.toLowerCase();
-  if (Object.prototype.hasOwnProperty.call(WORD_MAP, lower)) {
-    return WORD_MAP[lower];
+
+  // Remove stress markers before checking WORD_MAP.
+  const cleanWord = lower.replace(/'/g, "");
+
+  if (
+    Object.prototype.hasOwnProperty.call(
+      WORD_MAP,
+      cleanWord
+    )
+  ) {
+    return WORD_MAP[cleanWord];
   }
 
   let result = "";
-  let i = 0;
 
-  while (i < lower.length) {
-    const char = lower[i];
-    if (Object.prototype.hasOwnProperty.call(LETTER_MAP, char)) {
+  for (let i = 0; i < cleanWord.length; i++) {
+    const char = cleanWord[i];
+
+    if (
+      Object.prototype.hasOwnProperty.call(
+        LETTER_MAP,
+        char
+      )
+    ) {
       result += LETTER_MAP[char];
     } else {
       result += char;
     }
-    i++;
   }
+
   return result;
 }
 
-function transliterate(text) {
-  return text.trim().split(/\s+/).map(pronounceWord).join(" ");
+// ------------------------------------------------------------
+// Stress parsing
+// ------------------------------------------------------------
+//
+// The apostrophe means:
+//
+//   abc'def
+//
+// = stress the part after the apostrophe.
+//
+// The apostrophe itself disappears.
+//
+// Example:
+//
+//   a'ne
+//
+// becomes:
+//
+//   before = "a"
+//   stressed = "ne"
+//
+// If there is no apostrophe, the whole word is spoken normally.
+//
+
+function parseStressWord(word) {
+  const clean = word.trim();
+
+  const stressIndex = clean.indexOf("'");
+
+  if (stressIndex === -1) {
+    return {
+      hasStress: false,
+      before: "",
+      stressed: pronounceWord(clean),
+      after: ""
+    };
+  }
+
+  const beforeRaw = clean.slice(0, stressIndex);
+  const afterRaw = clean.slice(stressIndex + 1);
+
+  // Only the first apostrophe is treated as the stress marker.
+  // Any additional apostrophes are removed.
+  const before = pronounceWord(
+    beforeRaw.replace(/'/g, "")
+  );
+
+  const stressed = pronounceWord(
+    afterRaw.replace(/'/g, "")
+  );
+
+  return {
+    hasStress: true,
+    before,
+    stressed,
+    after: ""
+  };
 }
 
-export function speakArcon(text) {
-  if (!supported || !isSpeakable(text)) return false;
-  
-  const phoneticText = transliterate(text);
-  speechSynthesis.cancel();
+// ------------------------------------------------------------
+// Speech helper
+// ------------------------------------------------------------
 
-  const utterance = new SpeechSynthesisUtterance(phoneticText);
-  utterance.lang = "de-DE"; 
+function createUtterance(
+  text,
+  rate = 0.83,
+  pitch = 0.95
+) {
+  const utterance = new SpeechSynthesisUtterance(text);
 
-  if (cachedVoice) utterance.voice = cachedVoice;
+  utterance.lang = "de-DE";
 
-  utterance.rate = 0.83; // Размеренный, строгий мужской темп
-  utterance.pitch = 0.95; // Солидный низкий тон
+  if (cachedVoice) {
+    utterance.voice = cachedVoice;
+  }
+
+  utterance.rate = rate;
+  utterance.pitch = pitch;
   utterance.volume = 1.0;
 
-  speechSynthesis.speak(utterance);
+  return utterance;
+}
+
+// ------------------------------------------------------------
+// Speak one word
+// ------------------------------------------------------------
+//
+// Normal word:
+//
+//   ane
+//
+// -> one utterance
+//
+// Stressed word:
+//
+//   a'ne
+//
+// -> three parts:
+//
+//   "a"
+//   "ne"  <- stressed
+//
+// This lets the browser TTS give the stressed part slightly
+// more acoustic prominence.
+//
+
+function speakWord(word, done) {
+  const parsed = parseStressWord(word);
+
+  // No explicit stress marker.
+  if (!parsed.hasStress) {
+    const utterance = createUtterance(
+      parsed.stressed,
+      0.83,
+      0.95
+    );
+
+    utterance.onend = () => {
+      if (done) done();
+    };
+
+    utterance.onerror = () => {
+      if (done) done();
+    };
+
+    speechSynthesis.speak(utterance);
+    return;
+  }
+
+  const parts = [];
+
+  if (parsed.before) {
+    parts.push({
+      text: parsed.before,
+      rate: 0.83,
+      pitch: 0.95
+    });
+  }
+
+  if (parsed.stressed) {
+    parts.push({
+      text: parsed.stressed,
+      // Slightly slower and higher.
+      // This is the actual stress simulation.
+      rate: 0.68,
+      pitch: 1.08
+    });
+  }
+
+  if (parsed.after) {
+    parts.push({
+      text: parsed.after,
+      rate: 0.83,
+      pitch: 0.95
+    });
+  }
+
+  let index = 0;
+
+  function speakNextPart() {
+    if (index >= parts.length) {
+      if (done) done();
+      return;
+    }
+
+    const part = parts[index++];
+
+    const utterance = createUtterance(
+      part.text,
+      part.rate,
+      part.pitch
+    );
+
+    utterance.onend = () => {
+      // Tiny pause between pieces prevents them from
+      // becoming completely merged by some browsers.
+      setTimeout(speakNextPart, 15);
+    };
+
+    utterance.onerror = () => {
+      speakNextPart();
+    };
+
+    speechSynthesis.speak(utterance);
+  }
+
+  speakNextPart();
+}
+
+// ------------------------------------------------------------
+// Main Arcon TTS
+// ------------------------------------------------------------
+
+export function speakArcon(text) {
+  if (!supported || !isSpeakable(text)) {
+    return false;
+  }
+
+  speechSynthesis.cancel();
+
+  const words = text.trim().split(/\s+/);
+
+  let index = 0;
+
+  function speakNextWord() {
+    if (index >= words.length) {
+      return;
+    }
+
+    const word = words[index++];
+
+    speakWord(word, () => {
+      // Small natural pause between words.
+      setTimeout(speakNextWord, 25);
+    });
+  }
+
+  speakNextWord();
+
   return true;
 }
 
+// ------------------------------------------------------------
+// Stop
+// ------------------------------------------------------------
+
 export function stopArcon() {
-  if (supported) speechSynthesis.cancel();
+  if (supported) {
+    speechSynthesis.cancel();
+  }
 }
