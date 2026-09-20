@@ -52,7 +52,7 @@ const WORD_MAP = {
   y: "ü",
   u: "u",
 
-  qite: "kietä",
+  qite: "kie'tä",
   ese: "esse",
   hul: "huhl",
   vi: "w",
@@ -61,7 +61,8 @@ const WORD_MAP = {
   dezert: "däsärt",
   xer: "ksähr",
   von: "woon",
-  var: "wahr"
+  var: "wahr",
+  atejaj: "a'teschasch"
 };
 
 const supported =
