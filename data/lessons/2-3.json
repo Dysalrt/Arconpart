@@ -1,0 +1,66 @@
+{
+  "id": "2-3",
+  "title": "Order at cafe(and restaurant) III",
+  "xp": 10,
+  "lesson": [
+    {
+      "type": "T",
+      "title": "Words of the lesson",
+      "theory": "Those are the words you will need for this lesson",
+      "examples": [
+        {
+          "word": "ir",
+          "ipa": "ir",
+          "translation": "of"
+        },
+        {
+          "word": "byt",
+          "ipa": "yst",
+          "translation": "glass/cup"
+        },
+        {
+          "word": "ov",
+          "ipa": "ov",
+          "translation": "water"
+        }
+      ]
+    },
+    {
+      "type": "T",
+      "title": "Combinations",
+      "theory": "Using \"ir\" can help us in creating that combinations",
+      "examples": [
+        {
+          "word": "byt ir ov",
+          "ipa": "",
+          "translation": "glass of water"
+        },
+        {
+          "word": "byt ir tei",
+          "ipa": "",
+          "translation": "cup of tea"
+        }
+      ]
+    },
+    {
+      "type": "E",
+      "Etype": "write",
+      "prompt": "Traslate the sentence\nA glass of water please",
+      "speak": null,
+      "ipaHint": null,
+      "answers": [
+        "Byt ir ov xer"
+      ]
+    },
+    {
+      "type": "E",
+      "Etype": "write",
+      "prompt": "Translate the sentence\nQite, byt ir cofe xer",
+      "speak": null,
+      "ipaHint": null,
+      "answers": [
+        "Hi, a cup of coffee please"
+      ]
+    }
+  ]
+}
